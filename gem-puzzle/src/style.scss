@@ -137,8 +137,6 @@ button {
 
 .puzzle-piece {
     position: absolute;
-    width: 25%;
-    height: 25%;
     transform-style: preserve-3d;
     transform: scale(.96);
     transition: all .5s ease-in-out;
