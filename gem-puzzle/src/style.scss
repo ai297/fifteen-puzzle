@@ -24,8 +24,8 @@ body {
     display: block;
     perspective: 35rem;
     perspective-origin: center 45%;
-
     background-color: $main-dark-color;
+    overflow: hidden;
 }
 
 button {
@@ -37,6 +37,8 @@ button {
     cursor: pointer;
     background: none;
     transition: all .5s ease-in-out;
+
+    &:active { transform: translateY(.3em); }
 }
 
 // SIDE BLOCKS 
@@ -69,28 +71,26 @@ button {
 // GAME LAYER
 .game-layer {
     position: absolute;
-    width: 100%;
-    min-height: 100vh;
+    width: 60%;
+    height: 100%;
     left: 0;
     top: 0;
     transform-style: preserve-3d;
     transform: rotateX(0deg);
     transition: all .5s ease-in-out;
+    background-color: $main-dark-color;
     z-index: 1;
 
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    align-content: center;
 }
 
 // PUZZLE FIELD
 .puzzle-field {
     position: relative;
-    width: 25rem;
-    height: 25rem;
+    width: 28rem;
+    height: 28rem;
     transform-style: preserve-3d;
     transform: translateZ(3px);
 
@@ -102,8 +102,8 @@ button {
 
     &__frame {
         position: absolute;
-        width: 27rem;
-        height: 27rem;
+        width: calc(100% + 2rem);
+        height: calc(100% + 2rem);
         left: -1rem;
         top: -1rem;
         border: .25rem solid $frame-color;
@@ -255,7 +255,6 @@ button {
         font-weight: bold;
         color: #eecd14;
     }
-    // /&__time { color: cornflowerblue; }
 
     &__caption {
         font-size: 1.2rem;
