@@ -17,6 +17,18 @@ class SlidePuzzle {
             gameField.newField(puzzle.getField());
         };
 
+        const newGame = () => {
+            return new Promise((resolve) => {
+                createPuzzle(Settings.fieldSize);
+                gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
+
+                setTimeout(() => {
+                    gameField.setState_Active();
+                    resolve();
+                }, 50);
+            });
+        }
+
         // PUBLIC METHODS
         this.appendTo = (el) => {
             if(typeof el !== 'object' || el.style === undefined || typeof el.append !== 'function') return;
@@ -26,7 +38,9 @@ class SlidePuzzle {
             el.append(gameMenu.element);
         };
 
-        // init
+        // handlers
+        gameMenu.newGameHandler = newGame;
+        
         createPuzzle(Settings.fieldSize);
     }
 }

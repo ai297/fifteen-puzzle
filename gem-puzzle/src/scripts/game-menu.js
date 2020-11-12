@@ -1,55 +1,104 @@
 import create from './create';
+import Slider from './slider';
+
+function createUILayer() {
+    const header = create('ui-layer__header', 'h1');
+    const uiLayer = create('ui-layer');
+    const mainSection = create('ui-layer__main');
+    const copy = create('ui-layer__copyright');
+    copy.innerHTML = 'Aleksey Igumnov, <a href="https://github.com/ai297" target="_blank">github.com/ai297</a><br><a href="https://rs.school" target="_blank">RSSchool</a> 2020Q3';
+
+    uiLayer.append(header);
+    uiLayer.append(mainSection);
+    uiLayer.append(copy);
+    const result = {};
+    Object.defineProperties(result, {
+        rootElement: { value: uiLayer, },
+        header: {
+            get: () => header.innerHTML,
+            set: (val) => header.innerHTML = val,
+        },
+        mainSection: { value: mainSection, },
+    });
+    return result;
+}
+function createMainMenu() {
+    const menuELement = create('game-menu');
+    const newGameBuuton = create('game-button game-button--priority', 'button');
+    const continueButton = create('game-button', 'button');
+    const leaderBoardButtons = create('game-button', 'button');
+    const settingsButton = create('game-button', 'button');
+    menuELement.append(newGameBuuton, continueButton, leaderBoardButtons, settingsButton);
+
+    newGameBuuton.innerHTML = 'New game';
+    continueButton.innerHTML = 'Continue';
+    leaderBoardButtons.innerHTML = 'Best results';
+    settingsButton.innerHTML = 'Settings';
+    continueButton.setAttribute('disabled', true);
+    newGameBuuton.addEventListener('click', () => menuELement.dispatchEvent(new CustomEvent('main-menu', { detail: 'new-game', })));
+    continueButton.addEventListener('click', () => menuELement.dispatchEvent(new CustomEvent('main-menu', { detail: 'continue', })));
+    settingsButton.addEventListener('click', () => menuELement.dispatchEvent(new CustomEvent('main-menu', { detail: 'settings', })));
+    leaderBoardButtons.addEventListener('click', () => menuELement.dispatchEvent(new CustomEvent('main-menu', { detail: 'leader-board', })));
+
+    return menuELement;
+}
+
+function createSettingsMenu() {
+    const settingsMenu = create('game-menu');
+    settingsMenu.innerHTML = 'settings';
+    return settingsMenu;
+}
 
 class GameMenu {
     constructor() {
-        const root = create('ui-layer');
+        const uiLayer = createUILayer();
+        uiLayer.header = 'Gem<span>Puzzle</span>';
+        const mainMenu = createMainMenu();
+        const settingsMenu = createSettingsMenu();
+
+        const menuSlider = new Slider(uiLayer.mainSection);
+        menuSlider.addSlide(mainMenu, 'main-menu');
+        menuSlider.addSlide(settingsMenu, 'settings-menu');
+
+        mainMenu.addEventListener('main-menu', (event) => {
+            switch(event.detail) {
+                case 'settings':
+                    menuSlider.goTo('settings-menu');
+                    return;
+                case 'new-game':
+                    if (typeof this._ngHandler === 'function') this._ngHandler();
+                    return;
+                case 'continue':
+                    if (typeof this._cgHandler === 'function') this._cgHandler();
+                    return;
+                case 'leader-board':
+                    if (typeof this._lbHandler === 'function') this._lbHandler();
+                    return;
+            }
+        });
 
         Object.defineProperties(this, {
-            element: { value: root, },
+            element: { value: uiLayer.rootElement, },
+            newGameHandler: {
+                get: () => this._ngHandler,
+                set: (handler) => {
+                    if (typeof handler === 'function') this._ngHandler = handler;
+                },
+            },
+            continueGameHandler: {
+                get: () => this._cgHandler,
+                set: (handler) => {
+                    if (typeof handler === 'function') this._cgHandler = handler;
+                },
+            },
+            leaderBoardHandler: {
+                get: () => this._lbHandler,
+                set: (handler) => {
+                    if(typeof handler === 'function') this._lbHandler = handler;
+                },
+            },
         });
     }
-
-//     constructor() {
-//         // create DOM
-//         const gameLayer = create('game-layer');
-//         // const statsElement = create('stats');
-//         // const timeSection = create('stats__section');
-//         // const timeSectionHeader = create('stats__caption', 'h3');
-//         // const timeSectionContent = create('stats__time');
-//         // const movesSection = create('stats__section');
-//         // const movesSectionHeader = create('stats__caption', 'h3');
-//         // const movesSectionContent = create('stats__moves');
-//         // const buttonsSection = create('stats__section stats__section--buttons');
-//         // const pauseButtonElement = create('pause-button', 'button');
-//         // const surrenderButtonElement = create('surrender-button', 'button');
-
-//         // timeSectionHeader.innerHTML = 'Playing time:';
-//         // movesSectionHeader.innerHTML = 'Moves';
-//         // pauseButtonElement.setAttribute('type', 'button');
-//         // surrenderButtonElement.setAttribute('type', 'button');
-//         // pauseButtonElement.innerHTML = 'Pause';
-//         // surrenderButtonElement.innerHTML = 'Surrender';
-
-//         // timeSection.append(timeSectionHeader);
-//         // timeSection.append(timeSectionContent);
-//         // statsElement.append(timeSection);
-//         // movesSection.append(movesSectionHeader);
-//         // movesSection.append(movesSectionContent);
-//         // statsElement.append(movesSection);
-//         // buttonsSection.append(pauseButtonElement);
-//         // buttonsSection.append(surrenderButtonElement);
-//         // statsElement.append(buttonsSection);
-
-//         // gameLayer.append(statsElement);
-
-//         // Listeners
-//         // pauseButtonElement.addEventListener('click', e => this.onPause(e));
-//         // surrenderButtonElement.addEventListener('click', e => this.onSurrender(e));
-
-//         this.appendTo = (el) => { el.append(gameLayer); return this; }
-//         // this.setTime = (val) => timeSectionContent.innerHTML = val;
-//         // this.setMoves = (val) => movesSectionContent.innerHTML = val;
-//     }
 }
 
 export default GameMenu;

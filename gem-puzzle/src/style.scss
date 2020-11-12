@@ -3,7 +3,12 @@ $frame-color: rgba(255,255,255,0.5);
 $piece-color: #eecd14;
 $border-color: mix(black, $piece-color, 50%);
 $main-dark-color: #363636;
+$interactive-color: #6495ed;
+$alt-interactive-color: #df2d2d;
+$hover-color: #22eb4d;
+$text-color: #ffffff;
 
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;700&display=swap');
 // MAIN STYLES (need refactor)
 * {
     margin: 0;
@@ -13,33 +18,25 @@ $main-dark-color: #363636;
 *:focus { outline: none; }
 
 html {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Comfortaa', cursive;
     font-size: 20px;
-    color: white;
+    font-weight: 300;
+    color: $text-color;
     cursor: default;
 }
 
 body {
     width: 100%;
-    min-height: 100vh;
-    display: block;
-    perspective: 35rem;
-    perspective-origin: center 45%;
     background-color: $main-dark-color;
     overflow: hidden;
 }
-
-button {
-    font-size: 1rem;
-    text-transform: uppercase;
-    color: currentColor;
-    border: none;
-    border-radius: .5rem;
-    cursor: pointer;
-    background: none;
-    transition: all .5s ease-in-out;
-
-    &:active { transform: translateY(.3em); }
+.wrapper {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1400px;
+    min-height: 100vh;
+    perspective: 35rem;
+    perspective-origin: 30% 40%;
 }
 
 // SIDE BLOCKS (For 3d view)
@@ -73,34 +70,18 @@ button {
 .game-layer {
     position: absolute;
     width: 50%;
+    min-width: 32rem;
     height: 100%;
     left: 0;
     top: 0;
-    padding-right: 2rem;
     transform-style: preserve-3d;
     transform: rotateX(0deg);
     transition: all .5s ease-in-out;
-    background-color: $main-dark-color;
     z-index: 1;
 
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-}
-
-// UI LAYER
-.ui-layer {
-    position: absolute;
-    width: 50%;
-    height: 100%;
-    top: 0;
-    right: 0;
-    z-index: 10;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    overflow: hidden;
+    justify-content: center;
 }
 
 // PUZZLE FIELD
@@ -125,7 +106,7 @@ button {
         top: -1rem;
         border: .25rem solid $frame-color;
         border-radius: 1rem;
-        transition: all .5s ease-in-out;
+        transition: all 1s ease-in-out;
         opacity: 0;
     }
     &.active &__frame {
@@ -179,7 +160,10 @@ button {
             transform: translateZ(2rem);
             //background-image: url('./assets/noise.png');
 
-            & > b { color: $main-dark-color; }
+            & > span { 
+                color: $main-dark-color;
+                font-weight: 700;
+            }
         }
         &--back {
             transform: rotateX(180deg);
@@ -225,6 +209,115 @@ button {
         transform: translateZ(-1px) scale(.95);
         transition: all .5s ease-in-out;
         opacity: 0;
+    }
+}
+
+
+
+// UI LAYER
+.ui-layer {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    padding: 2rem;
+    z-index: 10;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    background-color: mix($main-dark-color, transparent, 50%);
+    overflow: hidden;
+
+    &__header {
+        padding-left: 1rem;
+        color: $piece-color;
+        font-size: 2.5rem;
+        border-bottom: 1px solid $border-color;
+        letter-spacing: .06em;
+        
+        span {
+            color: $interactive-color;
+            &::before {
+                content: '·';
+                color: $text-color;
+            }
+        }
+    }
+
+    &__main { flex: 0 1 70%; }
+
+    &__copyright {
+        font-size: .75rem;
+        font-weight: 300;
+        text-align: center;
+        letter-spacing: 0.05em;
+        opacity: .6;
+
+        a {
+            color: currentColor;
+            text-decoration: none;
+            font-weight: 700;
+            &:hover { text-decoration: underline; }
+        }
+    }
+}
+.slider {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+
+    &__section {
+        flex: 0 0 100%;
+        transition: all .5s ease-in-out;
+    
+        &--prev { margin-left: -100%; }
+    }   
+}
+.game-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .game-button {
+        margin: .5rem;
+        width: 50%;
+        min-width: 12rem;
+        line-height: 2rem;
+    }
+}
+.game-button {
+    padding: .5em;
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: currentColor;
+    font-family: 'Comfortaa', cursive;
+    font-weight: 700;
+    border: none;
+    border-radius: .5rem;
+    cursor: pointer;
+    background-color: mix($interactive-color, transparent, 60%);
+    transition: all .5s ease-in-out;
+    
+    &:not(:disabled):hover {
+        color: $main-dark-color;
+        background-color: $hover-color;
+    }
+    &:active { transform: translateY(.3em); }
+
+    &:disabled {
+        opacity: .4;
+        cursor: default;
+    }
+
+    &--priority {
+        color: $main-dark-color;
+        background-color: mix($piece-color, transparent, 90%);
     }
 }
 
@@ -278,7 +371,7 @@ button {
     }
 }
 
-.pause-button { background-color:  cornflowerblue; }
-.surrender-button { background-color: #df2d2d; }
+.pause-button { background-color:  $interactive-color; }
+.surrender-button { background-color: $alt-interactive-color; }
 .pause-button:hover,
-.surrender-button:hover { background-color: #22eb4d; }
+.surrender-button:hover { background-color: $hover-color; }

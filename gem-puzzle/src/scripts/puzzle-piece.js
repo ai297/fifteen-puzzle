@@ -19,11 +19,7 @@ class PuzzlePiece {
         element.style.height = `${baseSize}%`;
         const front = create('puzzle-piece__side puzzle-piece__side--front');
 
-        if (pieceNumber !== 0) front.innerHTML = `<b>${pieceNumber}</b>`;
-        else {
-            front.innerHTML = `<b>${fieldSize ** 2}</b>`;
-            element.classList.add('puzzle-piece--empty');
-        }
+        if (pieceNumber === 0) element.classList.add('puzzle-piece--empty');
 
         element.prepend(front);
 
@@ -36,8 +32,8 @@ class PuzzlePiece {
                 get: () => showNumber,
                 set: (val) => {
                     if (val) {
-                        if(pieceNumber !== 0) front.innerHTML = `<b>${pieceNumber}</b>`;
-                        else front.innerHTML = `<b>${fieldSize ** 2}</b>`;
+                        if(pieceNumber !== 0) front.innerHTML = `<span>${pieceNumber}</span>`;
+                        else front.innerHTML = `<span>${fieldSize ** 2}</span>`;
                     }
                     else front.innerHTML = ` `;
                     showNumber = val;
@@ -60,6 +56,7 @@ class PuzzlePiece {
         });
 
         this.position = positionIndex;
+        this.showNumber = true;
     }
 }
 export default PuzzlePiece;
