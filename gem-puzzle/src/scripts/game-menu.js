@@ -1,6 +1,14 @@
-// import create from './create';
+import create from './create';
 
-// class GameLayer {
+class GameMenu {
+    constructor() {
+        const root = create('ui-layer');
+
+        Object.defineProperties(this, {
+            element: { value: root, },
+        });
+    }
+
 //     constructor() {
 //         // create DOM
 //         const gameLayer = create('game-layer');
@@ -42,6 +50,6 @@
 //         // this.setTime = (val) => timeSectionContent.innerHTML = val;
 //         // this.setMoves = (val) => movesSectionContent.innerHTML = val;
 //     }
-// }
+}
 
-// export default GameLayer;
+export default GameMenu;

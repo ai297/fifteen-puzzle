@@ -46,24 +46,26 @@ class Puzzle {
             });
         };
 
-        Object.defineProperty(this, 'movableIndexes', {
-            get: () => {
-                const col = emptyPieceIndex % size;
-                const row = Math.floor(emptyPieceIndex / size);
-
-                return [
-                    (col - 1) >= 0 ? col - 1 + row * size : null,
-                    (col + 1) < size ? col + 1 + row * size : null,
-                    (row - 1) >= 0 ? col + (row - 1) * size : null,
-                    (row + 1) < size ? col + (row + 1) * size : null,
-                ].filter((el) => el !== null);
+        Object.defineProperties(this, {
+            movableIndexes: {
+                get: () => {
+                    const col = emptyPieceIndex % size;
+                    const row = Math.floor(emptyPieceIndex / size);
+    
+                    return [
+                        (col - 1) >= 0 ? col - 1 + row * size : null,
+                        (col + 1) < size ? col + 1 + row * size : null,
+                        (row - 1) >= 0 ? col + (row - 1) * size : null,
+                        (row + 1) < size ? col + (row + 1) * size : null,
+                    ].filter((el) => el !== null);
+                },
             },
-        });
-        Object.defineProperty(this, 'isComplete', {
-            get: () => field.reduce(
-                (acc, val, index, arr) => acc && (index === arr.length - 1
-                    ? true : val === index + 1), true,
-            ),
+            isComplete: {
+                get: () => field.reduce(
+                    (acc, val, index, arr) => acc && (index === arr.length - 1
+                        ? true : val === index + 1), true,
+                ),
+            },
         });
     }
 }

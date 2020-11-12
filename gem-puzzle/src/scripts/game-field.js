@@ -80,8 +80,8 @@ class GameField {
             fieldElement.classList.remove('active');
         };
 
-        Object.defineProperty(this, 'element', {
-            get: () => gameLayer,
+        Object.defineProperties(this, {
+            element: { value: gameLayer, },
         });
     }
 }

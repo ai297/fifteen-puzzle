@@ -4,6 +4,7 @@ $piece-color: #eecd14;
 $border-color: mix(black, $piece-color, 50%);
 $main-dark-color: #363636;
 
+// MAIN STYLES (need refactor)
 * {
     margin: 0;
     padding: 0;
@@ -41,7 +42,7 @@ button {
     &:active { transform: translateY(.3em); }
 }
 
-// SIDE BLOCKS 
+// SIDE BLOCKS (For 3d view)
 %_top-side {
     top: 0;
     left: 0;
@@ -71,10 +72,11 @@ button {
 // GAME LAYER
 .game-layer {
     position: absolute;
-    width: 60%;
+    width: 50%;
     height: 100%;
     left: 0;
     top: 0;
+    padding-right: 2rem;
     transform-style: preserve-3d;
     transform: rotateX(0deg);
     transition: all .5s ease-in-out;
@@ -83,7 +85,22 @@ button {
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+}
+
+// UI LAYER
+.ui-layer {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 10;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
 }
 
 // PUZZLE FIELD

@@ -28,32 +28,34 @@ class PuzzlePiece {
         element.prepend(front);
 
         // public properties
-        Object.defineProperty(this, 'element', {
-            get: () => element,
-        });
-        Object.defineProperty(this, 'showNumber', {
-            get: () => showNumber,
-            set: (val) => {
-                if (val) {
-                    if(pieceNumber !== 0) front.innerHTML = `<b>${pieceNumber}</b>`;
-                    else front.innerHTML = `<b>${fieldSize ** 2}</b>`;
-                }
-                else front.innerHTML = ` `;
-                showNumber = val;
+        Object.defineProperties(this, {
+            element: {
+                value: element,
             },
-        });
-        Object.defineProperty(this, 'canMove', {
-            get: () => element.dataset.canMove | false,
-            set: (val) => {
-                element.dataset.canMove = val;
+            showNumber: {
+                get: () => showNumber,
+                set: (val) => {
+                    if (val) {
+                        if(pieceNumber !== 0) front.innerHTML = `<b>${pieceNumber}</b>`;
+                        else front.innerHTML = `<b>${fieldSize ** 2}</b>`;
+                    }
+                    else front.innerHTML = ` `;
+                    showNumber = val;
+                },
             },
-        });
-        Object.defineProperty(this, 'position', {
-            get: () => positionIndex,
-            set: (index) => {
-                element.style.left = `${baseSize * (index % fieldSize)}%`;
-                element.style.top = `${baseSize * Math.floor(index / fieldSize)}%`;
-                positionIndex = index;
+            canMove: {
+                get: () => element.dataset.canMove | false,
+                set: (val) => {
+                    element.dataset.canMove = val;
+                },
+            },
+            position: {
+                get: () => positionIndex,
+                set: (index) => {
+                    element.style.left = `${baseSize * (index % fieldSize)}%`;
+                    element.style.top = `${baseSize * Math.floor(index / fieldSize)}%`;
+                    positionIndex = index;
+                },
             },
         });
 
