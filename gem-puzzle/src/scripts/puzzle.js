@@ -35,10 +35,10 @@ class Puzzle {
 
         this.getField = () => Array.from(field);
 
-        this.saveState = () => new Uint32Array(field.buffer).join('-');
+        this.saveState = () => Array.from(new Uint32Array(field.buffer)).map(n => n.toString(36)).join('-');
 
         this.loadState = (state) => {
-            const newState = new Uint8Array(new Uint32Array(state.split('-')).buffer);
+            const newState = new Uint8Array(new Uint32Array(state.split('-').map(n => Number.parseInt(n, 36))).buffer);
             if(newState.length !== field.length) throw Error('Invalid state.');
             newState.forEach((el, index) => {
                 field[index] = el;
@@ -52,11 +52,11 @@ class Puzzle {
                 const row = Math.floor(emptyPieceIndex / size);
 
                 return [
-                    col - 1 + row * size,
-                    col + 1 + row * size,
-                    col + (row - 1) * size,
-                    col + (row + 1) * size,
-                ].filter((el) => el >= 0 && el < length);
+                    (col - 1) >= 0 ? col - 1 + row * size : null,
+                    (col + 1) < size ? col + 1 + row * size : null,
+                    (row - 1) >= 0 ? col + (row - 1) * size : null,
+                    (row + 1) < size ? col + (row + 1) * size : null,
+                ].filter((el) => el !== null);
             },
         });
         Object.defineProperty(this, 'isComplete', {

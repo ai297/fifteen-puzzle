@@ -19,14 +19,14 @@ class PuzzlePiece {
         element.style.width = `${baseSize}%`;
         element.style.height = `${baseSize}%`;
         const front = create('puzzle-piece__side puzzle-piece__side--front');
-        front.innerHTML = `<b>${pieceNumber}</b>`;
-        element.prepend(front);
 
-        // public methods
-        this.setPosition = (index) => {
-            element.style.left = `${baseSize * (index % fieldSize)}%`;
-            element.style.top = `${baseSize * Math.floor(index / fieldSize)}%`;
-        };
+        if (pieceNumber !== 0) front.innerHTML = `<b>${pieceNumber}</b>`;
+        else {
+            front.innerHTML = `<b>${fieldSize ** 2}</b>`;
+            element.classList.add('puzzle-piece--empty');
+        }
+
+        element.prepend(front);
 
         // public properties
         Object.defineProperty(this, 'element', {
@@ -35,7 +35,10 @@ class PuzzlePiece {
         Object.defineProperty(this, 'showNumber', {
             get: () => showNumber,
             set: (val) => {
-                if (val) front.innerHTML = `<b>${pieceNumber}</b>`;
+                if (val) {
+                    if(pieceNumber !== 0) front.innerHTML = `<b>${pieceNumber}</b>`;
+                    else front.innerHTML = `<b>${fieldSize ** 2}</b>`;
+                }
                 else front.innerHTML = ` `;
                 showNumber = val;
             },
@@ -48,8 +51,16 @@ class PuzzlePiece {
                 canMove = val;
             },
         });
+        Object.defineProperty(this, 'position', {
+            get: () => positionIndex,
+            set: (index) => {
+                element.style.left = `${baseSize * (index % fieldSize)}%`;
+                element.style.top = `${baseSize * Math.floor(index / fieldSize)}%`;
+                positionIndex = index;
+            },
+        });
 
-        this.setPosition(positionIndex);
+        this.position = positionIndex;
     }
 }
 export default PuzzlePiece;
