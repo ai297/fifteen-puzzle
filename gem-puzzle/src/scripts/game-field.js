@@ -14,7 +14,7 @@ function createGrid(fieldSize, element) {
     }
 }
 
-class PuzzleField {
+class GameField {
     constructor() {
         // DOM
         const gameLayer = create('game-layer');
@@ -24,9 +24,17 @@ class PuzzleField {
 
         // private fields
         let pieces;
+        // private methods
+        const updatePieces = (updater) => {
+            if(typeof pieces !== 'object' || typeof updater !== 'function') return;
+            for(let p in pieces) {
+                updater(pieces[p]);
+            }
+        };
 
         // PUBLIC METHODS
         this.clear = () => {
+            pieces = {};
             fieldElement.innerHTML = '';
             fieldElement.classList.remove('active');
             fieldElement.append(fieldFrame);
@@ -34,9 +42,8 @@ class PuzzleField {
         
         this.newField = (piecesArray, movablePieces = []) => {
             if(!Array.isArray(piecesArray)) return;
-            pieces = {};
-            const fieldSize = Math.sqrt(piecesArray.length);
 
+            const fieldSize = Math.sqrt(piecesArray.length);
             this.clear();
             createGrid(fieldSize, fieldElement);
 
@@ -47,16 +54,24 @@ class PuzzleField {
             movablePieces.forEach((piece) => pieces[piece].canMove = true);
         };
 
-        this.update = (piecesArray, movablePieces = [], delay = 500) => {
-            if(!Array.isArray(piecesArray)) return;
-            piecesArray.forEach((piece, index) => {
-                pieces[piece].position = index;
-                pieces[piece].canMove = false;
+        this.updatePositions = (piecesArray, movablePieces = [], delay = 500) => {
+            return new Promise((resolve, reject) => {
+                if (!Array.isArray(piecesArray) || typeof pieces !== 'object') {
+                    reject(Error('Invalid arguments or field is empty.'));
+                }
+                piecesArray.forEach((piece, index) => {
+                    pieces[piece].position = index;
+                    pieces[piece].canMove = false;
+                });
+                setTimeout(() => {
+                    movablePieces.forEach((piece) => pieces[piece].canMove = true);
+                    resolve();
+                }, delay);
             });
-            setTimeout(() => {
-                movablePieces.forEach((piece) => pieces[piece].canMove = true);
-            }, delay);
         };
+
+        this.removeNumbers = () => updatePieces((piece) => piece.showNumber = false);
+        this.restoreNumbers = () => updatePieces((piece) => piece.showNumber = true);
 
         this.setState_Active = () => {
             fieldElement.classList.add('active');
@@ -70,4 +85,4 @@ class PuzzleField {
         });
     }
 }
-export default PuzzleField;
+export default GameField;

@@ -13,7 +13,6 @@ class PuzzlePiece {
     constructor(pieceNumber, positionIndex, fieldSize) {
         const baseSize = Math.floor(1000 / fieldSize) / 10;
         let showNumber = true;
-        let canMove = false;
 
         const element = createPuzzlePieceElement(pieceNumber);
         element.style.width = `${baseSize}%`;
@@ -44,11 +43,9 @@ class PuzzlePiece {
             },
         });
         Object.defineProperty(this, 'canMove', {
-            get: () => canMove,
+            get: () => element.dataset.canMove | false,
             set: (val) => {
-                if (val) element.classList.add('puzzle-piece--can-move');
-                else element.classList.remove('puzzle-piece--can-move');
-                canMove = val;
+                element.dataset.canMove = val;
             },
         });
         Object.defineProperty(this, 'position', {

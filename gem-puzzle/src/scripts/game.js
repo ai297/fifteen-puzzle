@@ -1,20 +1,22 @@
-import PuzzleField from './puzzle-field';
+import GameField from './game-field';
 import Puzzle from './puzzle';
 
 class SlidePuzzle {
     constructor() {
-        this._puzzleField = new PuzzleField();
-        this._currentPuzzle;
+        const gameField = new GameField();
+        let puzzle;
 
         this.appendTo = (el) => {
+            if(typeof el !== 'object' || el.style === undefined || typeof el.append !== 'function') return;
             el.style.position = 'relative';
-            el.append(this._puzzleField.element);
+            el.append(gameField.element);
         };
 
-        this.startNewGame = (size) => {
-            this._currentPuzzle = new Puzzle(size);
-            this._puzzleField.newField(this._currentPuzzle.getField(), this._currentPuzzle.getMovablePieces());
-        };
+        // this.startNewGame = (size) => {
+        //     if(size < 3 || size > 16) return;
+        //     puzzle = new Puzzle(size);
+        //     gameField.newField(puzzle.getField(), puzzle.getMovablePieces());
+        // };
     }
 }
 export default SlidePuzzle;

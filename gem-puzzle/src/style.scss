@@ -118,7 +118,7 @@ button {
     &.active {
         & .puzzle-piece__frame { opacity: 1; }
 
-        & .puzzle-piece--can-move {
+        & .puzzle-piece[data-can-move=true] {
             color: cornflowerblue;
             cursor: pointer;
     
