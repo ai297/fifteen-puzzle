@@ -1,5 +1,6 @@
 import create from './create';
 import Slider from './slider';
+import Settings from './game-settings';
 
 function createUILayer() {
     const header = create('ui-layer__header', 'h1');
@@ -41,8 +42,55 @@ function createMainMenu() {
 
 function createSettingsMenu() {
     const settingsMenu = create('game-menu');
-    settingsMenu.innerHTML = 'settings';
-    return settingsMenu;
+
+    const selectSizeHeader = create('game-menu__header', 'h3');
+    selectSizeHeader.innerHTML = 'Puzzle size:';
+
+    const sizeSelector = create('size-selector');
+    const prevSize = create('size-selector__nav-button', 'button');
+    const nextSize = create('size-selector__nav-button', 'button');
+    const sizeSelectorSizes = create('size-selector__sizes');
+    const sizes = {
+        3: create('size-selector__selected-size'),
+        4: create('size-selector__selected-size'),
+        5: create('size-selector__selected-size'),
+        6: create('size-selector__selected-size'),
+        7: create('size-selector__selected-size'),
+        8: create('size-selector__selected-size'),
+    }
+    prevSize.innerHTML = '<';
+    nextSize.innerHTML = '>';
+    sizeSelector.append(prevSize, sizeSelectorSizes, nextSize);
+
+    const sizeSelectorSlider = new Slider(sizeSelectorSizes);
+    for(let s in sizes) {
+        sizes[s].innerHTML = `${s} × ${s}`;
+        sizeSelectorSlider.addSlide(sizes[s], s);
+    }
+    const sizeChanged = (size) => {
+        settingsMenu.dispatchEvent(new CustomEvent('change-feild-size', {
+            detail: size,
+        }));
+    };
+    prevSize.onclick = () => {
+        sizeSelectorSlider.prev().then((size) => {
+            Settings.fieldSize = size;
+            sizeChanged(size);
+        });
+    };
+    nextSize.onclick = () => {
+        sizeSelectorSlider.next().then((size) => {
+            Settings.fieldSize = size;
+            sizeChanged(size);
+        });
+    };
+    sizeSelectorSlider.goTo(Settings.fieldSize);
+
+    const backButton = create('game-button confirm-settings', 'button');
+    backButton.innerHTML = 'Ok';
+
+    settingsMenu.append(selectSizeHeader, sizeSelector, backButton);
+    return { element: settingsMenu, backButton };
 }
 
 function createGameStats() {
@@ -57,8 +105,8 @@ function createGameStats() {
     const pauseButton = create('game-button', 'button');
     const surrenderButton = create('game-button game-button--red', 'button');
 
-    timerSection.innerHTML = '<h3 class="stat-section__header">Playing time:</h3>';
-    movesSection.innerHTML = '<h3 class="stat-section__header">Moves:</h3>';
+    timerSection.innerHTML = '<h3 class="game-menu__header">Playing time:</h3>';
+    movesSection.innerHTML = '<h3 class="game-menu__header">Moves:</h3>';
     pauseButton.innerHTML = 'Pause';
     surrenderButton.innerHTML = 'Surrender';
     timerSection.append(playingTime);
@@ -78,7 +126,7 @@ class GameMenu {
 
         const menuSlider = new Slider(uiLayer.mainSection);
         menuSlider.addSlide(mainMenu.element, 'main-menu');
-        menuSlider.addSlide(settingsMenu, 'settings-menu');
+        menuSlider.addSlide(settingsMenu.element, 'settings-menu');
         menuSlider.addSlide(statsMenu.element, 'game-stats');
 
         mainMenu.settingsButton.onclick = () => menuSlider.goTo('settings-menu');
@@ -89,6 +137,7 @@ class GameMenu {
             let hrs = Math.floor(val / ( 3600 ));
             statsMenu.time.innerHTML = `<span>${hrs}</span>:<span>${min < 10 ? '0' : ''}${min}</span>:<span>${sec < 10 ? '0' : ''}${sec}</span>`;
         }
+
         // public methods and properties
         this.showMainMenu = (anableContinueButton = false) => {
             if (anableContinueButton) mainMenu.continueButton.removeAttribute('disabled');
@@ -139,7 +188,19 @@ class GameMenu {
             gameMoves: {
                 set: (val) => statsMenu.moves.innerHTML = val,
             },
+            changeFieldSizeHandler: {
+                get: () => this._chFSHandler,
+                set: (handler) => {
+                    if (typeof handler === 'function') this._chFSHandler = handler;
+                },
+            },
         });
+
+        // handlers
+        settingsMenu.element.addEventListener('change-feild-size', (event) => {
+            if (typeof this._chFSHandler === 'function') this._chFSHandler(event.detail);
+        });
+        settingsMenu.backButton.onclick = () => menuSlider.goTo('main-menu', true);
     }
 }
 

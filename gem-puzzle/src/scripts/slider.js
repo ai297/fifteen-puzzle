@@ -5,17 +5,22 @@ class Slider {
 
         const slides = [];
         let currentSlide = -1;
-        let disable = false;
 
         const showSlide = (index, reverse = false) => {
             return new Promise((resolve, reject) => {
-                if(disable) resolve(slides[currentSlide].name);
-                if (currentSlide == -1) reject(Error('Slider is empty.'));
+                if (currentSlide === -1) {
+                    reject(Error('Slider is empty.'));
+                    return;
+                }
                 if (index < 0 || index >= slides.length) {
                     reject(Error(`Slider does not contains item with index ${index}.`));
+                    return;
+                }
+                if (currentSlide === index) {
+                    resolve(slides[index].name);
+                    return;
                 }
 
-                disable = true;
                 if (!reverse) {
                     element.append(slides[index].element);
                     slides[currentSlide].element.classList.add('slider__section--prev');
@@ -31,14 +36,13 @@ class Slider {
                     slides[currentSlide].element.classList.remove('slider__section--prev');
                     currentSlide = index;
                     resolve(slides[index].name);
-                    disable = false;
                 }, animationDelay);
             });
         };
 
         this.addSlide = (el, name) => {
             el.classList.add('slider__section');
-            slides.push({ element: el, name: name, });
+            slides.push({ element: el, name, });
 
             if (currentSlide === -1) {
                 element.append(el);
@@ -47,8 +51,22 @@ class Slider {
         };
 
         this.goTo = (name, reverse = false) => {
-            const index = slides.findIndex((slide) => slide.name == name);
+            const index = slides.findIndex((slide) => slide.name === name);
             return showSlide(index, reverse);
+        };
+
+        this.next = () => {
+            if (currentSlide === -1) return;
+            let newSlide = 0;
+            if (currentSlide < slides.length - 1) newSlide = currentSlide + 1;
+            return showSlide(newSlide);
+        };
+
+        this.prev = () => {
+            if (currentSlide === -1) return;
+            let newSlide = slides.length - 1;
+            if (currentSlide > 0) newSlide = currentSlide - 1;
+            return showSlide(newSlide, true);
         };
 
         Object.defineProperties(this, {

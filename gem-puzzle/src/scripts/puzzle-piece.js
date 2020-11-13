@@ -58,6 +58,8 @@ class PuzzlePiece {
                     element.style.left = `${baseSize * (index % fieldSize)}%`;
                     element.style.top = `${baseSize * Math.floor(index / fieldSize)}%`;
                     positionIndex = index;
+                    if (index === pieceNumber - 1) element.classList.add('puzzle-piece--completed');
+                    else element.classList.remove('puzzle-piece--completed');
                 },
             },
             onMove: {

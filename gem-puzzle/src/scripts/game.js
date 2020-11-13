@@ -62,6 +62,8 @@ class SlidePuzzle {
                     gameMenu.gameTime = gameTime;
                 }, 1000);
             }, 500);
+
+            this._changeSizeNotificationShowed = false;
         };
 
         this.movePiece = (piceNumber) => {
@@ -90,6 +92,13 @@ class SlidePuzzle {
         gameField.moveHandler = this.movePiece;
         gameMenu.pauseHandler = this.pause;
         gameMenu.continueGameHandler = this.continue;
+        gameMenu.changeFieldSizeHandler = (size) => {
+            if (isPaused && gameMoves === 0) createPuzzle(size);
+            else if (!this._changeSizeNotificationShowed) {
+                modalDialog.show('Puzzle size will change for next game.');
+                this._changeSizeNotificationShowed = true;
+            }
+        };
         
         createPuzzle(Settings.fieldSize);
     }
