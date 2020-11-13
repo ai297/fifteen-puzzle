@@ -76,7 +76,7 @@ body {
     top: 0;
     transform-style: preserve-3d;
     transform: rotateX(0deg);
-    transition: all .5s ease-in-out;
+    transition: all .5s linear;
     z-index: 1;
 
     display: flex;
@@ -141,6 +141,8 @@ body {
     color: $piece-color;
     font-size: 2rem;
     z-index: 2;
+
+    &--drag { transform: scale(.96) translateZ(3rem) !important; }
 
     &__side {
         position: absolute;
@@ -265,6 +267,7 @@ body {
     }
 }
 .slider {
+    padding: 1rem;
     display: flex;
     flex-direction: row;
     align-items: stretch;
@@ -319,59 +322,47 @@ body {
         color: $main-dark-color;
         background-color: mix($piece-color, transparent, 90%);
     }
+
+    &--red { background-color: $alt-interactive-color; }
 }
-
-.stats {
-    margin-left: 2rem;
-    width: 20rem;
-    height: 25rem;
-    transform-style: preserve-3d;
-    transition: all .5s ease-in-out;
-
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    border: .25rem solid $frame-color;
-    border-radius: 1rem;
-
-    &:hover { transform: translateZ(2rem); }
-
-    &__section {
-        margin: .5rem;
-        padding: .5rem;
-
-        &--buttons {
-            padding: 0;
-            display: flex;
-            align-items: stretch;
-            justify-content: space-around;
-
-            & > button {
-                margin: .5rem;
-                flex: 1 1 auto;
-                line-height: 3rem;
-            }
-        }
-    }
+.stat-section {
+    margin: .5rem;
+    padding: .5rem;
+    width: 100%;
+    max-width: 22rem;
+    min-width: 15rem;
 
     &__time,
     &__moves {
-        margin: 1rem 0;
+        margin-top: 1rem;
         text-align: center;
         font-size: 3rem;
-        font-weight: bold;
-        color: #eecd14;
+        color: $piece-color;
+        letter-spacing: 0.1em;
+    }
+    &__time > span:not(:first-child) {
+        margin: 0 5px;
+        display: inline-block;
+        min-width: 4.5rem;
+        text-align: center;
     }
 
-    &__caption {
+    &__header {
         font-size: 1.2rem;
-        font-weight: normal;
+        font-weight: 300;
+        text-align: left;
         opacity: .75;
     }
-}
 
-.pause-button { background-color:  $interactive-color; }
-.surrender-button { background-color: $alt-interactive-color; }
-.pause-button:hover,
-.surrender-button:hover { background-color: $hover-color; }
+    &--buttons {
+        padding: 0;
+        display: flex;
+        align-items: stretch;
+        justify-content: space-around;
+
+        & > .game-button {
+            flex: 1 0 50%;
+            min-width: auto;
+        }
+    }
+}

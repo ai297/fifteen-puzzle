@@ -8,6 +8,10 @@ class SlidePuzzle {
         const gameField = new GameField();
         const gameMenu = new GameMenu();
         let puzzle;
+        let timer;
+        let gameTime = 0;
+        let gameMoves = 0;
+        let isPaused = true;
 
         // private methods
         const createPuzzle = (size) => {
@@ -16,18 +20,6 @@ class SlidePuzzle {
             puzzle = new Puzzle(size);
             gameField.newField(puzzle.getField());
         };
-
-        const newGame = () => {
-            return new Promise((resolve) => {
-                createPuzzle(Settings.fieldSize);
-                gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
-
-                setTimeout(() => {
-                    gameField.setState_Active();
-                    resolve();
-                }, 50);
-            });
-        }
 
         // PUBLIC METHODS
         this.appendTo = (el) => {
@@ -38,8 +30,54 @@ class SlidePuzzle {
             el.append(gameMenu.element);
         };
 
+        this.newGame = () => {
+            createPuzzle(Settings.fieldSize);
+            gameTime = 0;
+            gameMoves = 0;
+            isPaused = false;
+
+            gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
+            setTimeout(() => {
+                gameField.setState_Active();
+                gameMenu.showStats();
+            }, 0);
+
+            // start game timer
+            setTimeout(() => {
+                timer = setInterval(() => {
+                    if(isPaused) return;
+                    gameTime++;
+                    gameMenu.gameTime = gameTime;
+                }, 1000);
+            }, 500);
+        };
+
+        this.movePiece = (piceNumber) => {
+            if (puzzle.move(piceNumber) < 0) return;
+            gameMoves++;
+            gameMenu.gameMoves = gameMoves;
+            gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
+        };
+
+        this.pause = () => {
+            if (isPaused) return;
+            isPaused = true;
+            gameMenu.showMainMenu(true);
+            gameField.updatePositions(puzzle.getField());
+        };
+
+        this.continue = () => {
+            if (!isPaused) return;
+            isPaused = false;
+            gameMenu.showStats(gameTime, gameMoves);
+            gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
+        }
+
         // handlers
-        gameMenu.newGameHandler = newGame;
+        gameMenu.newGameHandler = this.newGame;
+        gameField.moveHandler = this.movePiece;
+        gameMenu.pauseHandler = this.pause;
+        gameMenu.continueGameHandler = this.continue;
         
         createPuzzle(Settings.fieldSize);
     }

@@ -16,6 +16,8 @@ function createGrid(fieldSize, element) {
 
 class GameField {
     constructor() {
+        let gameLayerPosition = 0;
+
         // DOM
         const gameLayer = create('game-layer');
         const fieldElement = create('puzzle-field');
@@ -24,6 +26,7 @@ class GameField {
 
         // private fields
         let pieces;
+        let movePieceHandler;
         // private methods
         const updatePieces = (updater) => {
             if(typeof pieces !== 'object' || typeof updater !== 'function') return;
@@ -50,6 +53,9 @@ class GameField {
             piecesArray.forEach((piece, index) => {
                 pieces[piece] = new PuzzlePiece(piece, index, fieldSize);
                 fieldElement.prepend(pieces[piece].element);
+                pieces[piece].onMove = (num) => {
+                    if (typeof movePieceHandler === 'function') movePieceHandler(num);
+                };
             });
             movablePieces.forEach((piece) => pieces[piece].canMove = true);
         };
@@ -82,6 +88,20 @@ class GameField {
 
         Object.defineProperties(this, {
             element: { value: gameLayer, },
+            moveHandler: {
+                get: () => movePieceHandler,
+                set: (handler) => {
+                    if (typeof handler === 'function') movePieceHandler = handler;
+                },
+            },
+        });
+
+        gameLayer.addEventListener('wheel', (event) => {
+            event.preventDefault();
+            gameLayerPosition += event.deltaY;
+            if (gameLayerPosition > 300) gameLayerPosition = 300;
+            if (gameLayerPosition < - 500) gameLayerPosition = -500;
+            gameLayer.style.transform = `translateZ(${gameLayerPosition}px)`;
         });
     }
 }

@@ -13,15 +13,21 @@ class PuzzlePiece {
     constructor(pieceNumber, positionIndex, fieldSize) {
         const baseSize = Math.floor(1000 / fieldSize) / 10;
         let showNumber = true;
+        let canMove = false;
+        let onMoveHandler = (num) => console.log('move', num);
 
         const element = createPuzzlePieceElement(pieceNumber);
         element.style.width = `${baseSize}%`;
         element.style.height = `${baseSize}%`;
         const front = create('puzzle-piece__side puzzle-piece__side--front');
-
         if (pieceNumber === 0) element.classList.add('puzzle-piece--empty');
-
         element.prepend(front);
+
+        element.addEventListener('mouseup', (evt) => {
+            evt.preventDefault();
+            if (!canMove) return;
+            onMoveHandler(pieceNumber);
+        });
 
         // public properties
         Object.defineProperties(this, {
@@ -32,7 +38,7 @@ class PuzzlePiece {
                 get: () => showNumber,
                 set: (val) => {
                     if (val) {
-                        if(pieceNumber !== 0) front.innerHTML = `<span>${pieceNumber}</span>`;
+                        if (pieceNumber !== 0) front.innerHTML = `<span>${pieceNumber}</span>`;
                         else front.innerHTML = `<span>${fieldSize ** 2}</span>`;
                     }
                     else front.innerHTML = ` `;
@@ -40,9 +46,10 @@ class PuzzlePiece {
                 },
             },
             canMove: {
-                get: () => element.dataset.canMove | false,
+                get: () => canMove,
                 set: (val) => {
                     element.dataset.canMove = val;
+                    canMove = val;
                 },
             },
             position: {
@@ -51,6 +58,12 @@ class PuzzlePiece {
                     element.style.left = `${baseSize * (index % fieldSize)}%`;
                     element.style.top = `${baseSize * Math.floor(index / fieldSize)}%`;
                     positionIndex = index;
+                },
+            },
+            onMove: {
+                get: () => onMoveHandler,
+                set: (handler) => {
+                    if (typeof handler === 'function') onMoveHandler = handler;
                 },
             },
         });

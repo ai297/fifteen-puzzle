@@ -46,9 +46,9 @@ class Slider {
             }
         };
 
-        this.goTo = (name) => {
+        this.goTo = (name, reverse = false) => {
             const index = slides.findIndex((slide) => slide.name == name);
-            return showSlide(index);
+            return showSlide(index, reverse);
         };
 
         Object.defineProperties(this, {
