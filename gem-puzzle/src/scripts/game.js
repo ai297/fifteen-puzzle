@@ -2,11 +2,13 @@ import Settings from './game-settings';
 import Puzzle from './puzzle';
 import GameField from './game-field';
 import GameMenu from './game-menu';
+import ModalDialog from './modals';
 
 class SlidePuzzle {
     constructor() {
         const gameField = new GameField();
         const gameMenu = new GameMenu();
+        const modalDialog = new ModalDialog();
         let puzzle;
         let timer;
         let gameTime = 0;
@@ -28,21 +30,31 @@ class SlidePuzzle {
 
             el.append(gameField.element);
             el.append(gameMenu.element);
+            modalDialog.parent = el;
         };
 
         this.newGame = () => {
+            if (gameMoves > 0) {
+                modalDialog.show(
+                    'Your current game is not complited.<br>Start new game?',
+                    () => {
+                        gameMoves = 0;
+                        this.newGame();
+                    },
+                    true
+                );
+                return;
+            }
             createPuzzle(Settings.fieldSize);
             gameTime = 0;
-            gameMoves = 0;
             isPaused = false;
-
             gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
             setTimeout(() => {
                 gameField.setState_Active();
                 gameMenu.showStats();
             }, 0);
-
             // start game timer
+            clearInterval(timer);
             setTimeout(() => {
                 timer = setInterval(() => {
                     if(isPaused) return;

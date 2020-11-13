@@ -295,7 +295,7 @@ body {
     }
 }
 .game-button {
-    padding: .5em;
+    padding: .5em 1rem;
     font-size: 1rem;
     text-transform: uppercase;
     color: currentColor;
@@ -363,6 +363,44 @@ body {
         & > .game-button {
             flex: 1 0 50%;
             min-width: auto;
+        }
+    }
+}
+
+.game-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: mix($main-dark-color, transparent, 90%);
+    transition: opacity .5s ease-in-out;
+
+    &__wrapper {
+        max-width: 32rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 1.2rem;
+    }
+
+    &__text {
+        margin: 1rem 0;
+        text-align: center;
+        line-height: 1.5em;
+    }
+
+    &__buttons {
+        display: flex;
+        align-items: center;
+        & > .game-button {
+            margin: 0 .5rem;
+            flex: 0 0 50%;
+            line-height: 1.5rem;
         }
     }
 }
