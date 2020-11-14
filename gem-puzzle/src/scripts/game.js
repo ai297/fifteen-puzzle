@@ -1,13 +1,19 @@
 import Settings from './game-settings';
 import Puzzle from './puzzle';
 import GameField from './game-field';
-import GameMenu from './game-menu';
+import GameUI from './game-ui';
 import ModalDialog from './modals';
+
+function getRandomImage() {
+    if (Settings.puzzleStyle == 1) return null;
+    const imageNumber = Math.round(Math.random() * 41) + 1;
+    return `./assets/backgrounds/${imageNumber}.jpg`;
+}
 
 class SlidePuzzle {
     constructor() {
         const gameField = new GameField();
-        const gameMenu = new GameMenu();
+        const gameUI = new GameUI();
         const modalDialog = new ModalDialog();
         let puzzle;
         let timer;
@@ -17,10 +23,26 @@ class SlidePuzzle {
 
         // private methods
         const createPuzzle = (size) => {
-            if (size < 3) siz = 3;
+            if (size < 3) size = 3;
             else if (size > 16) size = 16;
             puzzle = new Puzzle(size);
             gameField.newField(puzzle.getField());
+            gameField.setPuzzleStyle(Settings.puzzleStyle, getRandomImage());
+        };
+
+        const win = () => {
+            isPaused = true;
+            clearInterval(timer);
+            gameField.updatePositions(puzzle.getField());
+            gameField.setState_Completed();
+
+            setTimeout(() => {
+                modalDialog.show(`Congratulation! You win!<br>Your time is ${gameTime} seconds and you has ${gameMoves} moves.`, () => {
+                    gameTime = 0;
+                    gameMoves = 0;
+                    gameUI.showMainMenu();
+                });
+            }, 1500);
         };
 
         // PUBLIC METHODS
@@ -29,7 +51,7 @@ class SlidePuzzle {
             el.style.position = 'relative';
 
             el.append(gameField.element);
-            el.append(gameMenu.element);
+            el.append(gameUI.element);
             modalDialog.parent = el;
         };
 
@@ -51,7 +73,7 @@ class SlidePuzzle {
             gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
             setTimeout(() => {
                 gameField.setState_Active();
-                gameMenu.showStats();
+                gameUI.showStats();
             }, 0);
             // start game timer
             clearInterval(timer);
@@ -59,7 +81,7 @@ class SlidePuzzle {
                 timer = setInterval(() => {
                     if(isPaused) return;
                     gameTime++;
-                    gameMenu.gameTime = gameTime;
+                    gameUI.gameTime = gameTime;
                 }, 1000);
             }, 500);
 
@@ -69,34 +91,44 @@ class SlidePuzzle {
         this.movePiece = (piceNumber) => {
             if (puzzle.move(piceNumber) < 0) return;
             gameMoves++;
-            gameMenu.gameMoves = gameMoves;
-            gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
+            gameUI.gameMoves = gameMoves;
+            gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces()).then(() => {
+                if (puzzle.isComplete) win();
+            });
         };
 
         this.pause = () => {
             if (isPaused) return;
             isPaused = true;
-            gameMenu.showMainMenu(true);
+            gameUI.showMainMenu(true);
             gameField.updatePositions(puzzle.getField());
         };
 
         this.continue = () => {
             if (!isPaused) return;
             isPaused = false;
-            gameMenu.showStats(gameTime, gameMoves);
+            gameUI.showStats(gameTime, gameMoves);
             gameField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
         }
 
         // handlers
-        gameMenu.newGameHandler = this.newGame;
+        gameUI.newGameHandler = this.newGame;
         gameField.moveHandler = this.movePiece;
-        gameMenu.pauseHandler = this.pause;
-        gameMenu.continueGameHandler = this.continue;
-        gameMenu.changeFieldSizeHandler = (size) => {
+        gameUI.pauseHandler = this.pause;
+        gameUI.continueGameHandler = this.continue;
+        gameUI.changeFieldSizeHandler = (size) => {
             if (isPaused && gameMoves === 0) createPuzzle(size);
             else if (!this._changeSizeNotificationShowed) {
                 modalDialog.show('Puzzle size will change for next game.');
                 this._changeSizeNotificationShowed = true;
+            }
+        };
+        gameUI.changeBgStyleHandler = (style) => {
+            console.log(style);
+            if (isPaused && gameMoves === 0) gameField.setPuzzleStyle(style, getRandomImage());
+            else if (!this._changeBackStyleNotificationShowed) {
+                modalDialog.show('Puzzle style will change for next game.');
+                this._changeBackStyleNotificationShowed = true;
             }
         };
         

@@ -70,6 +70,26 @@ class PuzzlePiece {
             },
         });
 
+        this.setBackgroundMode = (mode, img) => {
+            this.showNumber = true;
+            if (mode == 1) {
+                element.classList.remove('puzzle-piece--image');
+                front.style.backgroundImage = 'none';
+                return;
+            }
+            element.classList.add('puzzle-piece--image');
+            front.style.backgroundImage = `url('${img}')`;
+            front.style.backgroundSize = `${fieldSize * 100}%`;
+
+            let imgPositionIndex = pieceNumber !== 0 ? pieceNumber - 1 : fieldSize ** 2 - 1;
+            let baseOffset = Math.floor(1000 / (fieldSize - 1)) / 10;
+            let left = baseOffset * (imgPositionIndex % fieldSize);
+            let right = baseOffset * Math.floor(imgPositionIndex / fieldSize);
+            front.style.backgroundPosition = `${left}% ${right}%`;
+
+            if (mode == 3) this.showNumber = false;
+        };
+
         this.position = positionIndex;
         this.showNumber = true;
     }

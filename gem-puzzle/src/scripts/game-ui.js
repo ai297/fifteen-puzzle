@@ -25,10 +25,10 @@ function createUILayer() {
 }
 function createMainMenu() {
     const menuELement = create('game-menu');
-    const newGameButton = create('game-button game-button--red', 'button');
-    const continueButton = create('game-button game-button--priority', 'button');
-    const leaderBoardButton = create('game-button', 'button');
-    const settingsButton = create('game-button', 'button');
+    const newGameButton = create('game-button game-button--red menu-button', 'button');
+    const continueButton = create('game-button game-button--priority menu-button', 'button');
+    const leaderBoardButton = create('game-button menu-button', 'button');
+    const settingsButton = create('game-button menu-button', 'button');
     menuELement.append(newGameButton, continueButton, leaderBoardButton, settingsButton);
 
     newGameButton.innerHTML = 'New game';
@@ -42,11 +42,9 @@ function createMainMenu() {
 
 function createSettingsMenu() {
     const settingsMenu = create('game-menu');
+    settingsMenu.innerHTML = '<h3 class="game-menu__header">Puzzle size:</h3>';
 
-    const selectSizeHeader = create('game-menu__header', 'h3');
-    selectSizeHeader.innerHTML = 'Puzzle size:';
-
-    const sizeSelector = create('size-selector');
+    const sizeSelector = create('game-menu__section size-selector');
     const prevSize = create('size-selector__nav-button', 'button');
     const nextSize = create('size-selector__nav-button', 'button');
     const sizeSelectorSizes = create('size-selector__sizes');
@@ -58,8 +56,8 @@ function createSettingsMenu() {
         7: create('size-selector__selected-size'),
         8: create('size-selector__selected-size'),
     }
-    prevSize.innerHTML = '<';
-    nextSize.innerHTML = '>';
+    prevSize.innerHTML = '◄';
+    nextSize.innerHTML = '►';
     sizeSelector.append(prevSize, sizeSelectorSizes, nextSize);
 
     const sizeSelectorSlider = new Slider(sizeSelectorSizes);
@@ -86,29 +84,73 @@ function createSettingsMenu() {
     };
     sizeSelectorSlider.goTo(Settings.fieldSize);
 
+    const backStyleSelectorHeader = create('game-menu__header', 'h3');
+    backStyleSelectorHeader.innerHTML = 'Puzzle style:';
+    const backStyleSelectorSection = create('game-menu__section');
+
+    const bgStyleFirst = create('game-select-button bg-selector', 'label');
+    bgStyleFirst.innerHTML = '<figure><img src="./assets/numbers.png" alt="Numbers only"></figure><p>Numbers</p>'
+    const bgStyleFirstInput = document.createElement('input');
+    bgStyleFirstInput.setAttribute('type', 'radio');
+    bgStyleFirstInput.setAttribute('name', 'puzzle-back-style');
+    bgStyleFirstInput.value = 1;
+    bgStyleFirst.prepend(bgStyleFirstInput);
+    if (Settings.puzzleStyle == 1) bgStyleFirstInput.checked = true;
+
+    const bgStyleSecond = create('game-select-button bg-selector', 'label');
+    bgStyleSecond.innerHTML = '<figure><img src="./assets/image-and-numbers.png" alt="Imgage with numbers"></figure><p>Numbers with image</p>'
+    const bgStyleSecondInput = document.createElement('input');
+    bgStyleSecondInput.setAttribute('type', 'radio');
+    bgStyleSecondInput.setAttribute('name', 'puzzle-back-style');
+    bgStyleSecondInput.value = 2;
+    bgStyleSecond.prepend(bgStyleSecondInput);
+    if (Settings.puzzleStyle == 2) bgStyleSecondInput.checked = true;
+
+    const bgStyleThird = create('game-select-button bg-selector', 'label');
+    bgStyleThird.innerHTML = '<figure><img src="./assets/image-only.png" alt="Imgage only"></figure><p>Only random image</p>'
+    const bgStyleThirdInput = document.createElement('input');
+    bgStyleThirdInput.setAttribute('type', 'radio');
+    bgStyleThirdInput.setAttribute('name', 'puzzle-back-style');
+    bgStyleThirdInput.value = 3;
+    bgStyleThird.prepend(bgStyleThirdInput);
+    if (Settings.puzzleStyle == 3) bgStyleThirdInput.checked = true;
+
+    [bgStyleFirstInput, bgStyleSecondInput, bgStyleThirdInput].forEach((input) => {
+        input.onchange = () => {
+            if (input.checked) {
+                Settings.puzzleStyle = input.value;
+                settingsMenu.dispatchEvent(new CustomEvent('change-bg-style', {
+                    detail: input.value,
+                }));
+            }
+        }
+    });
+
+    backStyleSelectorSection.append(bgStyleFirst, bgStyleSecond, bgStyleThird);
+
     const backButton = create('game-button confirm-settings', 'button');
     backButton.innerHTML = 'Ok';
 
-    settingsMenu.append(selectSizeHeader, sizeSelector, backButton);
+    settingsMenu.append(sizeSelector, backStyleSelectorHeader, backStyleSelectorSection, backButton);
     return { element: settingsMenu, backButton };
 }
 
 function createGameStats() {
     const gameStatsMenu = create('game-menu');
-    const timerSection = create('stat-section');
-    const movesSection = create('stat-section');
-    const buttonsSection = create('stat-section stat-section--buttons');
+    const timerSection = create('game-menu__section game-menu__section--rows');
+    const movesSection = create('game-menu__section game-menu__section--rows');
+    const buttonsSection = create('game-menu__section');
 
-    const playingTime = create('stat-section__time');
-    const moves = create('stat-section__moves');
+    const playingTime = create('timer-counter');
+    const moves = create('moves-counter');
 
-    const pauseButton = create('game-button', 'button');
-    const surrenderButton = create('game-button game-button--red', 'button');
+    const pauseButton = create('game-button inline-button', 'button');
+    const surrenderButton = create('game-button game-button--red inline-button', 'button');
 
     timerSection.innerHTML = '<h3 class="game-menu__header">Playing time:</h3>';
     movesSection.innerHTML = '<h3 class="game-menu__header">Moves:</h3>';
     pauseButton.innerHTML = 'Pause';
-    surrenderButton.innerHTML = 'Surrender';
+    surrenderButton.innerHTML = 'Give up';
     timerSection.append(playingTime);
     movesSection.append(moves);
     buttonsSection.append(pauseButton, surrenderButton);
@@ -116,10 +158,10 @@ function createGameStats() {
     return { element: gameStatsMenu, time: playingTime, moves, pause: pauseButton, surrender: surrenderButton };
 }
 
-class GameMenu {
+class GameUI {
     constructor() {
         const uiLayer = createUILayer();
-        uiLayer.header = 'Gem<span>Puzzle</span>';
+        uiLayer.header = 'Slide<span>Puzzle</span>';
         const mainMenu = createMainMenu();
         const settingsMenu = createSettingsMenu();
         const statsMenu = createGameStats();
@@ -133,9 +175,8 @@ class GameMenu {
 
         const setStatsTime = (val) => {
             let sec = val % 60;
-            let min = Math.floor(val / 60) % 60;
-            let hrs = Math.floor(val / ( 3600 ));
-            statsMenu.time.innerHTML = `<span>${hrs}</span>:<span>${min < 10 ? '0' : ''}${min}</span>:<span>${sec < 10 ? '0' : ''}${sec}</span>`;
+            let min = Math.floor(val / 60);
+            statsMenu.time.innerHTML = `<span>${min < 10 ? '0' : ''}${min}</span>:<span>${sec < 10 ? '0' : ''}${sec}</span>`;
         }
 
         // public methods and properties
@@ -194,14 +235,23 @@ class GameMenu {
                     if (typeof handler === 'function') this._chFSHandler = handler;
                 },
             },
+            changeBgStyleHandler: {
+                get: () => this._chBgHandler,
+                set: (handler) => {
+                    if (typeof handler === 'function') this._chBgHandler = handler;
+                },
+            },
         });
 
         // handlers
         settingsMenu.element.addEventListener('change-feild-size', (event) => {
             if (typeof this._chFSHandler === 'function') this._chFSHandler(event.detail);
         });
+        settingsMenu.element.addEventListener('change-bg-style', (event) => {
+            if (typeof this._chBgHandler === 'function') this._chBgHandler(event.detail);
+        });
         settingsMenu.backButton.onclick = () => menuSlider.goTo('main-menu', true);
     }
 }
 
-export default GameMenu;
+export default GameUI;

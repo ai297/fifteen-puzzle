@@ -40,6 +40,7 @@ class GameField {
             pieces = {};
             fieldElement.innerHTML = '';
             fieldElement.classList.remove('active');
+            fieldElement.classList.remove('completed');
             fieldElement.append(fieldFrame);
         };
         
@@ -81,10 +82,18 @@ class GameField {
 
         this.setState_Active = () => {
             fieldElement.classList.add('active');
+            fieldElement.classList.remove('completed');
         };
         this.setState_Default = () => {
             fieldElement.classList.remove('active');
+            fieldElement.classList.remove('completed');
         };
+        this.setState_Completed = () => {
+            fieldElement.classList.remove('active');
+            fieldElement.classList.add('completed');
+        };
+
+        this.setPuzzleStyle = (mode, image) => updatePieces((piece) => piece.setBackgroundMode(mode, image));
 
         Object.defineProperties(this, {
             element: { value: gameLayer, },

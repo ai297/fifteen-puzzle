@@ -7,8 +7,8 @@ class ModalDialog {
         const wrapper = create('game-modal__wrapper');
         const textElement = create('game-modal__text');
         const buttons = create('game-modal__buttons');
-        const confirmButton = create('game-button', 'button');
-        const cancelButton = create('game-button game-button--red', 'button');
+        const confirmButton = create('game-button inline-button', 'button');
+        const cancelButton = create('game-button game-button--red inline-button', 'button');
 
         cancelButton.innerHTML = 'Cancel';
         confirmButton.innerHTML = 'Ok';
