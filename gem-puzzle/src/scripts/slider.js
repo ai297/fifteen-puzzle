@@ -51,7 +51,7 @@ class Slider {
         };
 
         this.goTo = (name, reverse = false) => {
-            const index = slides.findIndex((slide) => slide.name === name);
+            const index = slides.findIndex((slide) => slide.name == name);
             return showSlide(index, reverse);
         };
 

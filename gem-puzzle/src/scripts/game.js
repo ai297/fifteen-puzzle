@@ -4,12 +4,6 @@ import GameField from './game-field';
 import GameUI from './game-ui';
 import ModalDialog from './modals';
 
-function getRandomImage() {
-    if (Settings.puzzleStyle == 1) return null;
-    const imageNumber = Math.round(Math.random() * 41) + 1;
-    return `./assets/backgrounds/${imageNumber}.jpg`;
-}
-
 class SlidePuzzle {
     constructor() {
         const gameField = new GameField();
@@ -27,7 +21,6 @@ class SlidePuzzle {
             else if (size > 16) size = 16;
             puzzle = new Puzzle(size);
             gameField.newField(puzzle.getField());
-            gameField.setPuzzleStyle(Settings.puzzleStyle, getRandomImage());
         };
 
         const win = () => {
@@ -40,6 +33,7 @@ class SlidePuzzle {
                 modalDialog.show(`Congratulation! You win!<br>Your time is ${gameTime} seconds and you has ${gameMoves} moves.`, () => {
                     gameTime = 0;
                     gameMoves = 0;
+                    gameField.updateBackImage();
                     gameUI.showMainMenu();
                 });
             }, 1500);
@@ -52,7 +46,7 @@ class SlidePuzzle {
 
             el.append(gameField.element);
             el.append(gameUI.element);
-            modalDialog.parent = el;
+            //modalDialog.parent = el;
         };
 
         this.newGame = () => {
@@ -86,6 +80,7 @@ class SlidePuzzle {
             }, 500);
 
             this._changeSizeNotificationShowed = false;
+            this._changeBackStyleNotificationShowed = false;
         };
 
         this.movePiece = (piceNumber) => {
@@ -123,9 +118,8 @@ class SlidePuzzle {
                 this._changeSizeNotificationShowed = true;
             }
         };
-        gameUI.changeBgStyleHandler = (style) => {
-            console.log(style);
-            if (isPaused && gameMoves === 0) gameField.setPuzzleStyle(style, getRandomImage());
+        gameUI.changeBgStyleHandler = () => {
+            if (isPaused && gameMoves === 0) gameField.updatePuzzleStyle();
             else if (!this._changeBackStyleNotificationShowed) {
                 modalDialog.show('Puzzle style will change for next game.');
                 this._changeBackStyleNotificationShowed = true;

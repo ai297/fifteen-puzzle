@@ -2,7 +2,7 @@ import create from './create';
 
 class ModalDialog {
     constructor(parent) {
-        parent = parent | document.body;
+        parent = parent || document.body;
         this.element = create('game-modal');
         const wrapper = create('game-modal__wrapper');
         const textElement = create('game-modal__text');

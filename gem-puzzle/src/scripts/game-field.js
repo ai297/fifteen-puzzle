@@ -1,5 +1,6 @@
 import create from './create';
 import PuzzlePiece from './puzzle-piece';
+import Settings from './game-settings';
 
 function createGrid(fieldSize, element) {
     const cells = fieldSize ** 2;
@@ -27,6 +28,8 @@ class GameField {
         // private fields
         let pieces;
         let movePieceHandler;
+        let backImage = Settings.backgroundImage;
+
         // private methods
         const updatePieces = (updater) => {
             if(typeof pieces !== 'object' || typeof updater !== 'function') return;
@@ -57,6 +60,7 @@ class GameField {
                 pieces[piece].onMove = (num) => {
                     if (typeof movePieceHandler === 'function') movePieceHandler(num);
                 };
+                pieces[piece].setBackgroundMode(Settings.puzzleStyle, backImage);
             });
             movablePieces.forEach((piece) => pieces[piece].canMove = true);
         };
@@ -79,6 +83,8 @@ class GameField {
 
         this.removeNumbers = () => updatePieces((piece) => piece.showNumber = false);
         this.restoreNumbers = () => updatePieces((piece) => piece.showNumber = true);
+        this.updatePuzzleStyle = () =>  updatePieces((piece) => piece.setBackgroundMode(Settings.puzzleStyle, backImage));
+        this.updateBackImage = () => backImage = Settings.backgroundImage;
 
         this.setState_Active = () => {
             fieldElement.classList.add('active');
@@ -92,8 +98,6 @@ class GameField {
             fieldElement.classList.remove('active');
             fieldElement.classList.add('completed');
         };
-
-        this.setPuzzleStyle = (mode, image) => updatePieces((piece) => piece.setBackgroundMode(mode, image));
 
         Object.defineProperties(this, {
             element: { value: gameLayer, },

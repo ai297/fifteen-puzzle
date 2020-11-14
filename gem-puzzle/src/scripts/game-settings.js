@@ -1,8 +1,14 @@
-const DEFAULT_FIELD_SIZE = 'a297-puzzle_field-size';
+const DEFAULT_FIELD_SIZE = 'ai297-puzzle_field-size';
 const PUZZLE_STYLE = 'ai297-puzzle_background-style';
-const USE_3D_STYLE = 'a297-puzzle_use-3d-style';
+const USE_3D_STYLE = 'ai297-puzzle_use-3d-style';
+const LAST_IMAGE_USED = 'ai297-puzzle_last-image-used'
+
+function getRandom(from, to) {
+    return Math.round(Math.random() * (to - from)) + from;
+}
 
 const Settings = {};
+
 Object.defineProperties(Settings, {
     fieldSize: {
         get: () => localStorage.getItem(DEFAULT_FIELD_SIZE) || 4,
@@ -23,6 +29,16 @@ Object.defineProperties(Settings, {
         set: (value) => {
             if (value === 1) localStorage.removeItem(PUZZLE_STYLE);
             else localStorage.setItem(PUZZLE_STYLE, value);
+        },
+    },
+    backgroundImage: {
+        get: () => {
+            let lastImageNumber = localStorage.getItem(LAST_IMAGE_USED) || 0;
+            let imageNumber;
+            do {
+                imageNumber = getRandom(1, 60);
+            } while (imageNumber == lastImageNumber);
+            return `./assets/backgrounds/${imageNumber}.jpg`;
         },
     },
 });
