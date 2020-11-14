@@ -10,8 +10,6 @@ class ModalDialog {
         const confirmButton = create('game-button inline-button', 'button');
         const cancelButton = create('game-button game-button--red inline-button', 'button');
 
-        cancelButton.innerHTML = 'Cancel';
-        confirmButton.innerHTML = 'Ok';
         buttons.append(cancelButton, confirmButton);
         wrapper.append(textElement, buttons);
         this.element.append(wrapper);
@@ -19,41 +17,45 @@ class ModalDialog {
         let confirmHandler;
         let cancelHandler;
 
-        this.element.addEventListener('click', (event) => {
-            if (event.target === this.element) this.hide();
-        });
-        confirmButton.onclick = () => {
-            if (typeof confirmHandler === 'function') confirmHandler();
-            this.hide();
-        };
-        cancelButton.onclick = () => {
-            if (typeof cancelHandler === 'function') cancelHandler();
-            this.hide();
+        const hide = () => {
+            this.element.style.opacity = 0;
+            setTimeout(() => {
+                parent.removeChild(this.element);
+            }, 500);
         };
 
-        this.show = (text, confirm, cancel) => {
+        this.element.addEventListener('click', (event) => {
+            if (event.target === this.element) cancelHandler();
+        });
+        confirmButton.onclick = () => confirmHandler();
+        cancelButton.onclick = () => cancelHandler();
+
+        this.show = (text, okText, cancelText) => new Promise((resolve, reject) => {
             this.element.style.opacity = 0;
             cancelButton.style.display = 'none';
             textElement.innerHTML = text;
-            confirmHandler = confirm;
 
-            if (typeof cancel !== 'undefined') {
-                cancelButton.style.display = 'block'
-                cancelHandler = cancel;
-            }
+            if (typeof okText === 'string') confirmButton.innerHTML = okText;
+            else confirmButton.innerHTML = 'Ok';
+            if (typeof cancelText === 'string') cancelButton.innerHTML = cancelText;
+            else cancelButton.innerHTML = 'Cancel';
+
+            if (!!cancelText) cancelButton.style.display = 'block';
+
+            confirmHandler = () => {
+                resolve();
+                hide();
+            };
+            cancelHandler = () => {
+                reject();
+                hide();
+            };
 
             parent.append(this.element);
             setTimeout(() => {
                 this.element.style.opacity = 1;
             }, 0);
-        }
-
-        this.hide = () => {
-            this.element.style.opacity = 0;
-            setTimeout(() => {
-                parent.removeChild(this.element);
-            }, 500);
-        }
+        });
 
         Object.defineProperties(this, {
             parent: {

@@ -15,7 +15,7 @@ function createGrid(fieldSize, element) {
     }
 }
 
-class GameField {
+class PuzzleField {
     constructor() {
         let gameLayerPosition = 0;
 
@@ -118,4 +118,4 @@ class GameField {
         });
     }
 }
-export default GameField;
+export default PuzzleField;
