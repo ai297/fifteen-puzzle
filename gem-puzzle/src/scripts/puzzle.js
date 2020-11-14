@@ -46,6 +46,11 @@ class Puzzle {
             });
         };
 
+        this.moveTop = () => this.moveIndex(emptyPieceIndex % size + (Math.floor(emptyPieceIndex / size) - 1) * size);
+        this.moveBottom = () => this.moveIndex(emptyPieceIndex % size + (Math.floor(emptyPieceIndex / size) + 1) * size);
+        this.moveLeft = () => this.moveIndex(emptyPieceIndex % size - 1 + Math.floor(emptyPieceIndex / size) * size);
+        this.moveRight = () => this.moveIndex(emptyPieceIndex % size + 1 + Math.floor(emptyPieceIndex / size) * size);
+
         Object.defineProperties(this, {
             movableIndexes: {
                 get: () => {

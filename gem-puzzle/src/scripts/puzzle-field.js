@@ -31,6 +31,11 @@ class PuzzleField {
         let backImage = Settings.backgroundImage;
 
         // private methods
+        const switch3dStyle = (use3dStyle) => {
+            if (use3dStyle) gameLayer.classList.remove('game-layer--flat');
+            else gameLayer.classList.add('game-layer--flat');
+        };
+
         const updatePieces = (updater) => {
             if(typeof pieces !== 'object' || typeof updater !== 'function') return;
             for(let p in pieces) {
@@ -65,20 +70,12 @@ class PuzzleField {
             movablePieces.forEach((piece) => pieces[piece].canMove = true);
         };
 
-        this.updatePositions = (piecesArray, movablePieces = [], delay = 500) => {
-            return new Promise((resolve, reject) => {
-                if (!Array.isArray(piecesArray) || typeof pieces !== 'object') {
-                    reject(Error('Invalid arguments or field is empty.'));
-                }
-                piecesArray.forEach((piece, index) => {
-                    pieces[piece].position = index;
-                    pieces[piece].canMove = false;
-                });
-                setTimeout(() => {
-                    movablePieces.forEach((piece) => pieces[piece].canMove = true);
-                    resolve();
-                }, delay);
+        this.updatePositions = (piecesArray, movablePieces = []) => {
+            piecesArray.forEach((piece, index) => {
+                pieces[piece].position = index;
+                pieces[piece].canMove = false;
             });
+            movablePieces.forEach((piece) => pieces[piece].canMove = true);
         };
 
         this.removeNumbers = () => updatePieces((piece) => piece.showNumber = false);
@@ -116,6 +113,10 @@ class PuzzleField {
             if (gameLayerPosition < - 500) gameLayerPosition = -500;
             gameLayer.style.transform = `translateZ(${gameLayerPosition}px)`;
         });
+
+        Settings.addListener('use3dStyle', switch3dStyle);
+
+        switch3dStyle(Settings.use3dStyle);
     }
 }
 export default PuzzleField;

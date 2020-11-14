@@ -40,7 +40,15 @@ class SlidePuzzle {
                 modalDialog.show(`Congratulation! You win!<br>
                     Your time is ${gameTime} seconds and you has ${gameMoves} moves.`, 'Yo!')
                 .finally(onWin);
-            }, 1500);
+            }, 1000);
+        };
+
+        const showMove = () => {
+            gameMoves++;
+            gameUI.gameMoves = gameMoves;
+            puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces()).then(() => {
+                if (puzzle.isComplete) win();
+            });
         };
 
         const changeFieldSize = (size) => {
@@ -66,19 +74,17 @@ class SlidePuzzle {
 
             el.append(puzzleField.element);
             el.append(gameUI.element);
+            this.element = el;
             //modalDialog.parent = el;
         };
 
         this.newGame = () => {
             if (gameMoves > 0) {
-                modalDialog.show(
-                    'Your current game is not complited.<br>Start new game?',
-                    () => {
+                modalDialog.show('Your current game is not complited.<br>Start new game?', 'Yes', 'No')
+                    .then(() => {
                         gameMoves = 0;
                         this.newGame();
-                    },
-                    true
-                );
+                    });
                 return;
             }
             createPuzzle(Settings.fieldSize);
@@ -104,12 +110,7 @@ class SlidePuzzle {
         };
 
         this.movePiece = (piceNumber) => {
-            if (puzzle.move(piceNumber) < 0) return;
-            gameMoves++;
-            gameUI.gameMoves = gameMoves;
-            puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces()).then(() => {
-                if (puzzle.isComplete) win();
-            });
+            if (puzzle.move(piceNumber) >= 0) showMove();
         };
 
         this.pause = () => {
@@ -134,6 +135,28 @@ class SlidePuzzle {
 
         Settings.addListener('fieldSize', changeFieldSize);
         Settings.addListener('puzzleStyle', changeBgStyle);
+
+        document.addEventListener('keydown', (event) => {
+            if (isPaused) return;
+            switch(event.code) {
+                case 'ArrowUp':
+                    event.preventDefault();
+                    if(puzzle.moveTop() >= 0 ) showMove();
+                    break;
+                case 'ArrowDown':
+                    event.preventDefault();
+                    if(puzzle.moveBottom() >= 0 ) showMove();
+                    break;
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    if(puzzle.moveLeft() >= 0 ) showMove();
+                    break;
+                case 'ArrowRight':
+                    event.preventDefault();
+                    if(puzzle.moveRight() >= 0 ) showMove();
+                    break;
+            }
+        });
         
         createPuzzle(Settings.fieldSize);
     }
