@@ -122,7 +122,7 @@ body {
             cursor: pointer;
     
             &:hover {
-                transform: scale(.96) translateZ(1rem);
+                transform: scale(.96) translateZ(.75rem);
                 color: $hover-color;
             }
         }
@@ -140,6 +140,11 @@ body {
         & .puzzle-piece.puzzle-piece--image {
             span { opacity: 0; }
         }
+    }
+    &.solving {
+        & .puzzle-piece { transition: all .25s ease-in-out; }
+        & .puzzle-piece__frame { opacity: 1; }
+        & .puzzle-field__frame { border-color: mix($alt-interactive-color, transparent, 60%); }
     }
 }
 
@@ -170,6 +175,14 @@ body {
 
     &--completed {
         span { opacity: .5; }
+    }
+
+    &--selected { 
+        color: $alt-interactive-color;
+        span { 
+            color: white;
+            opacity: 1;
+        }
     }
 
     &__side {

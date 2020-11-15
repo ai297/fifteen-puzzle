@@ -52,6 +52,9 @@ class Puzzle {
         this.moveRight = () => this.moveIndex(emptyPieceIndex % size + 1 + Math.floor(emptyPieceIndex / size) * size);
 
         Object.defineProperties(this, {
+            emptyIndex: {
+                get: () => emptyPieceIndex,
+            },
             movableIndexes: {
                 get: () => {
                     const col = emptyPieceIndex % size;
@@ -70,6 +73,9 @@ class Puzzle {
                     (acc, val, index, arr) => acc && (index === arr.length - 1
                         ? true : val === index + 1), true,
                 ),
+            },
+            size: {
+                get: () => size,
             },
         });
     }

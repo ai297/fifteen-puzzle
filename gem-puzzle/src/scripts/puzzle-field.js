@@ -39,7 +39,7 @@ class PuzzleField {
         const updatePieces = (updater) => {
             if(typeof pieces !== 'object' || typeof updater !== 'function') return;
             for(let p in pieces) {
-                updater(pieces[p]);
+                updater(pieces[p], p);
             }
         };
 
@@ -88,13 +88,23 @@ class PuzzleField {
             fieldElement.classList.remove('completed');
         };
         this.setState_Default = () => {
+            fieldElement.classList.remove('solving');
             fieldElement.classList.remove('active');
             fieldElement.classList.remove('completed');
         };
         this.setState_Completed = () => {
+            fieldElement.classList.remove('solving');
             fieldElement.classList.remove('active');
             fieldElement.classList.add('completed');
         };
+        this.setState_Solving = () => {
+            fieldElement.classList.add('solving');
+        };
+
+        this.selectPieces = (...numbers) => updatePieces((piece, pieceValue) => {
+            if (numbers.indexOf(pieceValue * 1) < 0) piece.selected = false;
+            else piece.selected = true;
+        });
 
         Object.defineProperties(this, {
             element: { value: gameLayer, },

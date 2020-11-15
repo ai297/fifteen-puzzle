@@ -34,6 +34,9 @@ class PuzzlePiece {
             element: {
                 value: element,
             },
+            // value: {
+            //     get: () => pieceNumber,
+            // },
             showNumber: {
                 get: () => showNumber,
                 set: (val) => {
@@ -66,6 +69,12 @@ class PuzzlePiece {
                 get: () => onMoveHandler,
                 set: (handler) => {
                     if (typeof handler === 'function') onMoveHandler = handler;
+                },
+            },
+            selected: {
+                set: (value) => {
+                    if (value) element.classList.add('puzzle-piece--selected');
+                    else element.classList.remove('puzzle-piece--selected');
                 },
             },
         });

@@ -1,5 +1,6 @@
 import Settings from './game-settings';
 import Puzzle from './puzzle';
+import Solver from './puzzle-solver';
 import PuzzleField from './puzzle-field';
 import GameUI from './game-ui';
 import ModalDialog from './modals';
@@ -46,9 +47,8 @@ class SlidePuzzle {
         const showMove = () => {
             gameMoves++;
             gameUI.gameMoves = gameMoves;
-            puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces()).then(() => {
-                if (puzzle.isComplete) win();
-            });
+            puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
+            if (puzzle.isComplete) win();
         };
 
         const changeFieldSize = (size) => {
@@ -127,10 +127,29 @@ class SlidePuzzle {
             puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
         }
 
+        this.solve = () => {
+            if (isPaused || typeof puzzle === 'undefined') return;
+            if (puzzle.isComplete) return;
+
+            if (typeof this.solver === 'undefined') this.solver = new Solver();
+            this.solver.solveIt(puzzle, puzzleField)
+                .then(() => {
+
+                })
+                .catch((e) => {
+                    alert(e);
+                })
+                .finally(() => {
+                    isPaused = true;
+                    gameUI.showMainMenu();
+                });
+        };
+
         // handlers
         gameUI.addListener('new-game', this.newGame);
         gameUI.addListener('pause', this.pause);
         gameUI.addListener('continue', this.continue);
+        gameUI.addListener('give-up', this.solve);
         puzzleField.moveHandler = this.movePiece;
 
         Settings.addListener('fieldSize', changeFieldSize);
