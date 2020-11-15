@@ -31,8 +31,8 @@ class SlidePuzzle {
             puzzleField.setState_Completed();
 
             const onWin = () => {
-                gameTime = 0;
                 gameMoves = 0;
+                gameTime = 0;
                 puzzleField.updateBackImage();
                 gameUI.showMainMenu();
             };

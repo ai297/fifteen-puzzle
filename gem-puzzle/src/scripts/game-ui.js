@@ -65,7 +65,7 @@ function createGameStats() {
 class GameUI {
     constructor() {
         const uiLayer = createUILayer();
-        uiLayer.header = 'Slide<span>Puzzle</span>';
+        uiLayer.header = 'Gem<span>Puzzle</span>';
         const mainMenu = createMainMenu();
         const settingsMenu = new SettingsMenu();
         const statsMenu = createGameStats();

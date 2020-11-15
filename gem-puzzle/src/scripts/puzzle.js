@@ -10,6 +10,27 @@ class Puzzle {
         let emptyPieceIndex = length - 1;
         field[emptyPieceIndex] = EMPTY_PICE_VALUE;
 
+        const isSolvable = () => {
+            let N = 0;
+            let E = size;
+            field.forEach((piece, index) => {
+                if (piece !== EMPTY_PICE_VALUE) {
+                    N += field.reduce((acc, val, ind) => (val < piece && ind > index) ? ++acc : acc , 0);
+                }
+                else E = Math.floor(index / size) + 1;
+            });
+            if (size % 2 === 0) N += E;
+            return N % 2 === 0;
+        };
+
+        const shuffle = () => {
+            do {
+                field.sort(() => Math.random() * 2 - 1 );
+            } while (!isSolvable());
+            emptyPieceIndex = field.indexOf(EMPTY_PICE_VALUE);
+        };
+
+
         // define public methods
         this.getMovablePieces = () => this.movableIndexes.map((el) => field[el]);
 
@@ -78,6 +99,8 @@ class Puzzle {
                 get: () => size,
             },
         });
+
+        shuffle();
     }
 }
 
