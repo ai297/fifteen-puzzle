@@ -1,6 +1,6 @@
 class Solver {
     constructor() {
-        this.moveDelay = 200;
+        this.moveDelay = 300;
 
         let currentPuzzle;
         let currentField;
