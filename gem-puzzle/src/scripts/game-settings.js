@@ -36,7 +36,11 @@ class Settings {
                 },
             },
             use3dStyle: {
-                get: () => localStorage.getItem(USE_3D_STYLE) || true,
+                get: () =>{
+                    let use3d = localStorage.getItem(USE_3D_STYLE);
+                    if (use3d === undefined) return true;
+                    else return use3d;
+                },
                 set: (value) => {
                     if (value) localStorage.removeItem(USE_3D_STYLE);
                     else localStorage.setItem(USE_3D_STYLE, value);

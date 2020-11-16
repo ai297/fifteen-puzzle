@@ -65,7 +65,7 @@ function createSoundAnd3dSettings() {
     soundCheckbox.setAttribute('type', 'checkbox');
     soundCheckboxLabel.prepend(soundCheckbox);
 
-    if (Settings.soundEnabled) soundCheckbox.checked = true;
+    soundCheckbox.checked = Settings.soundEnabled;
     soundCheckbox.onchange = () => Settings.soundEnabled = soundCheckbox.checked;
 
     const use3dSettingsSection = document.createElement('div');
@@ -76,8 +76,7 @@ function createSoundAnd3dSettings() {
     const use3dCheckbox = document.createElement('input');
     use3dCheckbox.setAttribute('type', 'checkbox');
     use3dCheckboxLabel.prepend(use3dCheckbox);
-
-    if (Settings.use3dStyle) use3dCheckbox.checked = true;
+    use3dCheckbox.checked = Settings.use3dStyle === 'true';
     use3dCheckbox.onchange = () => Settings.use3dStyle = use3dCheckbox.checked;
 
     soundAnd3dSettings.append(soundSettingsSection, use3dSettingsSection);

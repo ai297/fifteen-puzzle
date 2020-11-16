@@ -109,9 +109,11 @@ class GameUI {
         Object.defineProperties(this, {
             element: { value: uiLayer.rootElement, },
             gameTime: {
+                get: () => statsMenu.time.innerText,
                 set: setStatsTime,
             },
             gameMoves: {
+                get: () => statsMenu.moves.innerText,
                 set: (val) => statsMenu.moves.innerHTML = val,
             },
         });

@@ -137,6 +137,7 @@ body {
             transform: scale(1);
             span { opacity: 1; }
         }
+        & .puzzle-piece--selected { color: $piece-color; }
         & .puzzle-piece.puzzle-piece--image {
             span { opacity: 0; }
         }

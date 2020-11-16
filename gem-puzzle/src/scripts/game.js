@@ -132,17 +132,22 @@ class SlidePuzzle {
             if (puzzle.isComplete) return;
 
             if (typeof this.solver === 'undefined') this.solver = new Solver();
-            this.solver.solveIt(puzzle, puzzleField)
-                .then(() => {
 
-                })
-                .catch((e) => {
-                    alert(e);
-                })
-                .finally(() => {
-                    isPaused = true;
-                    gameUI.showMainMenu();
-                });
+            this.solver.solveIt(puzzle, puzzleField, (moves) => {
+                gameUI.gameMoves = gameMoves + moves;
+            }).then((moves) => {
+                console.log(`Puzzle complete with ${gameMoves + moves} moves.`);
+                puzzleField.setState_Completed();
+                gameUI.showMainMenu();
+            })
+            .catch((e) => {
+                alert(e);
+                puzzleField.setState_Active();
+                gameUI.showMainMenu(true);
+            })
+            .finally(() => {
+                isPaused = true;
+            });
         };
 
         // handlers
