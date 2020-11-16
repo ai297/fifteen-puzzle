@@ -81,7 +81,7 @@ class PuzzleField {
         this.removeNumbers = () => updatePieces((piece) => piece.showNumber = false);
         this.restoreNumbers = () => updatePieces((piece) => piece.showNumber = true);
         this.updatePuzzleStyle = () =>  updatePieces((piece) => piece.setBackgroundMode(Settings.puzzleStyle, backImage));
-        this.updateBackImage = () => backImage = Settings.backgroundImage;
+        this.updateBackImage = (image) => backImage = image || Settings.backgroundImage;
 
         this.setState_Active = () => {
             fieldElement.classList.add('active');
@@ -113,6 +113,9 @@ class PuzzleField {
                 set: (handler) => {
                     if (typeof handler === 'function') movePieceHandler = handler;
                 },
+            },
+            backImage: {
+                get: () => backImage,
             },
         });
 

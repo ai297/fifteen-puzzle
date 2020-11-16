@@ -4,6 +4,9 @@ import Solver from './puzzle-solver';
 import PuzzleField from './puzzle-field';
 import GameUI from './game-ui';
 import ModalDialog from './modals';
+import Score from './game-score';
+
+const SAVE_GAME_KEY = 'ai297-puzzle_saved-game';
 
 class SlidePuzzle {
     constructor() {
@@ -15,6 +18,7 @@ class SlidePuzzle {
         let gameTime = 0;
         let gameMoves = 0;
         let isPaused = true;
+        let isFieldReady = false;
 
         // private methods
         const createPuzzle = (size) => {
@@ -29,6 +33,9 @@ class SlidePuzzle {
             clearInterval(timer);
             puzzleField.updatePositions(puzzle.getField());
             puzzleField.setState_Completed();
+            localStorage.removeItem(SAVE_GAME_KEY);
+
+            const gameScore = Score.calculateScore(puzzle.size, gameTime, gameMoves);
 
             const onWin = () => {
                 gameMoves = 0;
@@ -38,18 +45,23 @@ class SlidePuzzle {
             };
 
             setTimeout(() => {
-                modalDialog.show(`Congratulation! You win!<br>
-                    Your time is ${gameTime} seconds and you has ${gameMoves} moves.`, 'Yo!')
+                modalDialog.show(`Congratulation! You win and got ${gameScore} points!<br>
+                    Your time is ${gameUI.gameTime} and you has ${gameMoves} moves.`, 'Yo!')
                 .finally(onWin);
             }, 1000);
         };
 
         const showMove = () => {
-            gameMoves++;
             gameUI.gameMoves = gameMoves;
             puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
             if (puzzle.isComplete) win();
         };
+
+        const startTimer = () => setInterval(() => {
+            if(isPaused) return;
+            gameTime++;
+            gameUI.gameTime = gameTime;
+        }, 1000);
 
         const changeFieldSize = (size) => {
             if (isPaused && gameMoves === 0) createPuzzle(size);
@@ -58,7 +70,6 @@ class SlidePuzzle {
                 this._changeSizeNotificationShowed = true;
             }
         };
-
         const changeBgStyle = () => {
             if (isPaused && gameMoves === 0) puzzleField.updatePuzzleStyle();
             else if (!this._changeBackStyleNotificationShowed) {
@@ -83,11 +94,17 @@ class SlidePuzzle {
                 modalDialog.show('Your current game is not complited.<br>Start new game?', 'Yes', 'No')
                     .then(() => {
                         gameMoves = 0;
+                        isFieldReady = false;
                         this.newGame();
                     });
                 return;
             }
-            createPuzzle(Settings.fieldSize);
+            if (!isFieldReady) {
+                createPuzzle(Settings.fieldSize);
+                puzzleField.updateBackImage();
+                puzzleField.updatePuzzleStyle();
+                isFieldReady = true;
+            }
             gameTime = 0;
             isPaused = false;
             puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
@@ -98,23 +115,49 @@ class SlidePuzzle {
             // start game timer
             clearInterval(timer);
             setTimeout(() => {
-                timer = setInterval(() => {
-                    if(isPaused) return;
-                    gameTime++;
-                    gameUI.gameTime = gameTime;
-                }, 1000);
+                timer = startTimer();
             }, 500);
 
             this._changeSizeNotificationShowed = false;
             this._changeBackStyleNotificationShowed = false;
         };
 
+        this.save = () => {
+            if (gameMoves === 0) return;
+            const state = [puzzle.size, puzzle.saveState(), gameMoves, gameTime, puzzleField.backImage];
+            const saveString = btoa(JSON.stringify(state));
+            localStorage.setItem(SAVE_GAME_KEY, saveString);
+            console.log('state saved');
+        };
+
+        this.load = () => {
+            const saveString = localStorage.getItem(SAVE_GAME_KEY);
+            if(saveString === undefined) return;
+            const state = JSON.parse(atob(saveString));
+            puzzle = new Puzzle(state[0]);
+            puzzle.loadState(state[1]);
+            gameMoves = state[2];
+            gameTime = state[3];
+            puzzleField.newField(puzzle.getField());
+            puzzleField.updateBackImage(state[4]);
+            puzzleField.updatePuzzleStyle();
+            puzzleField.setState_Active();
+            showMove();
+            timer = startTimer();
+            isPaused = true;
+            isFieldReady = true;
+        };
+
         this.movePiece = (piceNumber) => {
-            if (puzzle.move(piceNumber) >= 0) showMove();
+            if (puzzle.move(piceNumber) < 0) return;
+            gameMoves++;
+            showMove();
         };
 
         this.pause = () => {
             if (isPaused) return;
+            if (gameMoves === 0) isFieldReady = false;
+            this.save();
             isPaused = true;
             gameUI.showMainMenu(true);
             puzzleField.updatePositions(puzzle.getField());
@@ -136,9 +179,12 @@ class SlidePuzzle {
             this.solver.solveIt(puzzle, puzzleField, (moves) => {
                 gameUI.gameMoves = gameMoves + moves;
             }).then((moves) => {
-                console.log(`Puzzle complete with ${gameMoves + moves} moves.`);
+                console.log(`Puzzle complete with ${gameMoves + moves} moves. Time: ${gameTime}`);
+                console.log(`Solver take ${Score.calculateScore(puzzle.size, gameTime, moves)}`);
                 puzzleField.setState_Completed();
                 gameUI.showMainMenu();
+                localStorage.removeItem(SAVE_GAME_KEY);
+                isFieldReady = false;
             })
             .catch((e) => {
                 alert(e);
@@ -162,27 +208,45 @@ class SlidePuzzle {
 
         document.addEventListener('keydown', (event) => {
             if (isPaused) return;
+            event.preventDefault();
             switch(event.code) {
                 case 'ArrowUp':
-                    event.preventDefault();
-                    if(puzzle.moveTop() >= 0 ) showMove();
+                    if(puzzle.moveTop() < 0 ) return;
+                    gameMoves++;
+                    showMove();
                     break;
                 case 'ArrowDown':
-                    event.preventDefault();
-                    if(puzzle.moveBottom() >= 0 ) showMove();
+                    if(puzzle.moveBottom() < 0 ) return;
+                    gameMoves++;
+                    showMove();
                     break;
                 case 'ArrowLeft':
-                    event.preventDefault();
-                    if(puzzle.moveLeft() >= 0 ) showMove();
+                    if(puzzle.moveLeft() < 0 ) return;
+                    gameMoves++;
+                    showMove();
                     break;
                 case 'ArrowRight':
-                    event.preventDefault();
-                    if(puzzle.moveRight() >= 0 ) showMove();
+                    if(puzzle.moveRight() < 0 ) return;
+                    gameMoves++;
+                    showMove();
                     break;
             }
         });
         
-        createPuzzle(Settings.fieldSize);
+        if (localStorage.getItem(SAVE_GAME_KEY) !== null) {
+            this.load();
+            gameUI.showMainMenu(true);
+        } else {
+            createPuzzle(Settings.fieldSize);
+            gameUI.showMainMenu();
+            isFieldReady = true;
+        }
+
+        // auto-saving
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'hidden') this.pause();
+        });
+        window.addEventListener("unload", this.save);
     }
 }
 export default SlidePuzzle;

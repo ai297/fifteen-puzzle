@@ -2,7 +2,7 @@ const EMPTY_PICE_VALUE = 0;
 
 class Puzzle {
     constructor(size) {
-        if (size <= 1) throw Error('size should be from 1 to 8');
+        if (size <= 2) throw Error('size should be from 1 to 8');
         if (size > 16) throw Error('max puzzle size is 16');
 
         const length = size ** 2;
@@ -56,15 +56,29 @@ class Puzzle {
 
         this.getField = () => Array.from(field);
 
-        this.saveState = () => Array.from(new Uint32Array(field.buffer)).map(n => n.toString(36)).join('-');
+        this.saveState = () => {
+            const state = this.getField().map((val, index) => val << (index % 4) * 8);
+            const result = [];
+            state.forEach((val, index) => {
+                let i = Math.floor(index / 4);
+                if (index % 4 === 0) result[i] = 0;
+                result[i] += val;
+            });
+            return result.map(n => n.toString(36)).join('.');
+        };
 
         this.loadState = (state) => {
-            const newState = new Uint8Array(new Uint32Array(state.split('-').map(n => Number.parseInt(n, 36))).buffer);
-            if(newState.length !== field.length) throw Error('Invalid state.');
-            newState.forEach((el, index) => {
-                field[index] = el;
-                if(el === EMPTY_PICE_VALUE) emptyPieceIndex = index;
+            const newState = state.split('.').map(n => Number.parseInt(n, 36));
+            const stateArray = [];
+            newState.forEach((val, index) => {
+                for (let i = 0; i < 4; i++) {
+                    stateArray[index * 4 + i] = (val & (255 << (i * 8))) >> (i * 8);
+                }
             });
+            for (let i = 0; i < length; i++) {
+                field[i] = stateArray[i];
+                if (stateArray[i] === EMPTY_PICE_VALUE) emptyPieceIndex = i;
+            }
         };
 
         this.moveTop = () => this.moveIndex(emptyPieceIndex % size + (Math.floor(emptyPieceIndex / size) - 1) * size);

@@ -1,6 +1,6 @@
 class Solver {
     constructor() {
-        this.moveDelay = 0;
+        this.moveDelay = 500;
 
         let currentPuzzle;
         let currentField;
@@ -49,6 +49,8 @@ class Solver {
 
                     }
                     step++;
+                    moves++;
+                    onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
                     setTimeout(goNext, this.moveDelay);
                 };
@@ -78,6 +80,8 @@ class Solver {
                             break;
                     }
                     step++;
+                    moves++;
+                    onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
                     setTimeout(goNext, this.moveDelay);
                 };
@@ -117,6 +121,8 @@ class Solver {
                             break;
                     }
                     step++;
+                    moves++;
+                    onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
                     setTimeout(goNext, this.moveDelay);
                 };
@@ -155,6 +161,8 @@ class Solver {
                             break;
                     }
                     step++;
+                    moves++;
+                    onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
                     setTimeout(goNext, this.moveDelay);
                 };
@@ -188,6 +196,8 @@ class Solver {
                             break;
                     }
                     step++;
+                    moves++;
+                    onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
                     setTimeout(goNext, this.moveDelay);
                 };
@@ -221,6 +231,8 @@ class Solver {
                             break;
                     }
                     step++;
+                    moves++;
+                    onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
                     setTimeout(goNext, this.moveDelay);
                 };
@@ -286,6 +298,8 @@ class Solver {
                             break;
                     }
                     step++;
+                    moves++;
+                    onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
                     setTimeout(goNext, this.moveDelay);
                 };
