@@ -39,7 +39,7 @@ class Settings {
                 get: () =>{
                     let use3d = localStorage.getItem(USE_3D_STYLE);
                     if (use3d === null) return true;
-                    else return use3d === 'true';
+                    return use3d === 'true';
                 },
                 set: (value) => {
                     if (value) localStorage.removeItem(USE_3D_STYLE);
@@ -56,7 +56,10 @@ class Settings {
                 },
             },
             soundEnabled: {
-                get: () => localStorage.getItem(SOUND_DISABLED) === null ? true : localStorage.getItem(SOUND_DISABLED) === 'true',
+                get: () => {
+                    let val = localStorage.getItem(SOUND_DISABLED);
+                    return val === null ? true : val !== 'true';
+                },
                 set: (value) => {
                     if (value) localStorage.removeItem(SOUND_DISABLED);
                     else localStorage.setItem(SOUND_DISABLED, true);

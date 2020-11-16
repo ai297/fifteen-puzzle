@@ -5,6 +5,7 @@ import PuzzleField from './puzzle-field';
 import GameUI from './game-ui';
 import ModalDialog from './modals';
 import Score from './game-score';
+import playSound from './game-sound';
 
 const SAVE_GAME_KEY = 'ai297-puzzle_saved-game';
 
@@ -45,10 +46,11 @@ class SlidePuzzle {
             };
 
             setTimeout(() => {
+                playSound('win');
                 modalDialog.show(`Congratulation! You win and got ${gameScore} points!<br>
                     Your time is ${gameUI.gameTime} and you has ${gameMoves} moves.`, 'Yo!')
                 .finally(onWin);
-            }, 1000);
+            }, 500);
         };
 
         const showMove = () => {
@@ -66,6 +68,7 @@ class SlidePuzzle {
         const changeFieldSize = (size) => {
             if (isPaused && gameMoves === 0) createPuzzle(size);
             else if (!this._changeSizeNotificationShowed) {
+                playSound('popup');
                 modalDialog.show('Puzzle size will change for next game.');
                 this._changeSizeNotificationShowed = true;
             }
@@ -73,6 +76,7 @@ class SlidePuzzle {
         const changeBgStyle = () => {
             if (isPaused && gameMoves === 0) puzzleField.updatePuzzleStyle();
             else if (!this._changeBackStyleNotificationShowed) {
+                playSound('popup');
                 modalDialog.show('Puzzle style will change for next game.');
                 this._changeBackStyleNotificationShowed = true;
             }
@@ -91,6 +95,7 @@ class SlidePuzzle {
 
         this.newGame = () => {
             if (gameMoves > 0) {
+                playSound('popup');
                 modalDialog.show('Your current game is not complited.<br>Start new game?', 'Yes', 'No')
                     .then(() => {
                         gameMoves = 0;
@@ -120,6 +125,16 @@ class SlidePuzzle {
 
             this._changeSizeNotificationShowed = false;
             this._changeBackStyleNotificationShowed = false;
+            playSound('newGame', true);
+        };
+
+        this.pause = () => {
+            if (isPaused) return;
+            if (gameMoves === 0) isFieldReady = false;
+            this.save();
+            isPaused = true;
+            gameUI.showMainMenu(true);
+            puzzleField.updatePositions(puzzle.getField());
         };
 
         this.save = () => {
@@ -141,26 +156,17 @@ class SlidePuzzle {
             puzzleField.newField(puzzle.getField());
             puzzleField.updateBackImage(state[4]);
             puzzleField.updatePuzzleStyle();
-            puzzleField.setState_Active();
-            showMove();
             timer = startTimer();
-            isPaused = true;
             isFieldReady = true;
+            puzzleField.setState_Active();
+            this.pause();
         };
 
         this.movePiece = (piceNumber) => {
             if (puzzle.move(piceNumber) < 0) return;
             gameMoves++;
             showMove();
-        };
-
-        this.pause = () => {
-            if (isPaused) return;
-            if (gameMoves === 0) isFieldReady = false;
-            this.save();
-            isPaused = true;
-            gameUI.showMainMenu(true);
-            puzzleField.updatePositions(puzzle.getField());
+            playSound('move');
         };
 
         this.continue = () => {

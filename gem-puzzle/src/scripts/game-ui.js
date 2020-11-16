@@ -1,6 +1,10 @@
 import create from './create';
 import Slider from './slider';
 import SettingsMenu from './settings-menu';
+import playSound from './game-sound';
+
+const soundOver = () => playSound('hover');
+const soundClick = () => playSound('click');
 
 function createUILayer() {
     const header = create('ui-layer__header', 'h1');
@@ -131,6 +135,12 @@ class GameUI {
         mainMenu.leaderBoardButton.onclick = () => clickHandler('leader-board');
         statsMenu.pause.onclick = () => clickHandler('pause');
         statsMenu.surrender.onclick = () => clickHandler('give-up');
+
+        [mainMenu.newGameButton, mainMenu.continueButton, mainMenu.leaderBoardButton, mainMenu.settingsButton,
+        statsMenu.pause, statsMenu.surrender].forEach((button) => {
+            button.addEventListener('mouseenter', soundOver);
+            button.addEventListener('mousedown', soundClick);
+        });
     }
 }
 

@@ -1,4 +1,5 @@
 import create from './create';
+import playSound from './game-sound';
 
 class ModalDialog {
     constructor(parent) {
@@ -13,6 +14,11 @@ class ModalDialog {
         buttons.append(cancelButton, confirmButton);
         wrapper.append(textElement, buttons);
         this.element.append(wrapper);
+
+        [confirmButton, cancelButton].forEach((button) => {
+            button.addEventListener('mouseenter', () => playSound('hover'));
+            button.addEventListener('mousedown', () => playSound('click'));
+        });
 
         let confirmHandler;
         let cancelHandler;

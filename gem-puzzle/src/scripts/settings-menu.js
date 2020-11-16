@@ -1,6 +1,12 @@
 import create from './create';
 import Settings from './game-settings';
 import Slider from './slider';
+import playSound from './game-sound';
+
+const soundOver = () => playSound('hover');
+const soundClick = () => playSound('click');
+const soundSelect = () => playSound('select');
+
 
 function createPuzzleSizeSelector() {
     const sizeSelector = create('game-menu__section size-selector');
@@ -9,6 +15,12 @@ function createPuzzleSizeSelector() {
     const sizeSelectorSizes = create('size-selector__sizes');
     prevSize.innerHTML = '◄';
     nextSize.innerHTML = '►';
+    let sliderDisable = false;
+
+    [prevSize, nextSize].forEach((b) => {
+        b.addEventListener('mouseenter', soundOver);
+        b.addEventListener('mousedown', soundSelect);
+    });
     
     const sizes = {};
     const sizeSelectorSlider = new Slider(sizeSelectorSizes);
@@ -19,8 +31,22 @@ function createPuzzleSizeSelector() {
     }
     
     sizeSelector.append(prevSize, sizeSelectorSizes, nextSize);
-    prevSize.onclick = () => sizeSelectorSlider.prev().then((size) => Settings.fieldSize = size);
-    nextSize.onclick = () => sizeSelectorSlider.next().then((size) => Settings.fieldSize = size);
+    prevSize.onclick = () => {
+        if (sliderDisable) return;
+        sliderDisable = true;
+        sizeSelectorSlider.prev().then((size) => {
+            Settings.fieldSize = size;
+            sliderDisable = false;
+        });
+    }
+    nextSize.onclick = () => {
+        if (sliderDisable) return;
+        sliderDisable = true;
+        sizeSelectorSlider.next().then((size) => {
+            Settings.fieldSize = size;
+            sliderDisable = false;
+        });
+    };
     sizeSelectorSlider.goTo(Settings.fieldSize);
 
     return sizeSelector;
@@ -48,6 +74,8 @@ function createPuzzleStyleSelector() {
             if (input.checked) Settings.puzzleStyle = input.value;
         };
         puzzleStyleSelector.append(label);
+        label.addEventListener('mouseenter', soundOver);
+        label.addEventListener('mousedown', soundSelect);
     });
 
     return puzzleStyleSelector;
@@ -76,9 +104,13 @@ function createSoundAnd3dSettings() {
     const use3dCheckbox = document.createElement('input');
     use3dCheckbox.setAttribute('type', 'checkbox');
     use3dCheckboxLabel.prepend(use3dCheckbox);
-    use3dCheckbox.checked = Settings.use3dStyle === 'true';
+    use3dCheckbox.checked = Settings.use3dStyle;
     use3dCheckbox.onchange = () => Settings.use3dStyle = use3dCheckbox.checked;
 
+    [soundCheckboxLabel, use3dCheckboxLabel].forEach((l) => {
+        l.addEventListener('mouseenter', soundOver);
+        l.addEventListener('mousedown', soundSelect);
+    });
     soundAnd3dSettings.append(soundSettingsSection, use3dSettingsSection);
 
     return soundAnd3dSettings;
@@ -98,6 +130,9 @@ class SettingsMenu {
         const backButton = create('game-button confirm-settings', 'button');
         backButton.innerHTML = 'Ok';
         this.element.append(backButton);
+
+        backButton.addEventListener('mouseenter', soundOver);
+        backButton.addEventListener('mousedown', soundClick);
 
         Object.defineProperties(this, {
             onClickBack: {

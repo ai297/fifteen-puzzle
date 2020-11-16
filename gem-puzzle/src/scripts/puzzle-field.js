@@ -129,7 +129,7 @@ class PuzzleField {
 
         Settings.addListener('use3dStyle', switch3dStyle);
 
-        switch3dStyle(Settings.use3dStyle === 'true');
+        switch3dStyle(Settings.use3dStyle);
     }
 }
 export default PuzzleField;

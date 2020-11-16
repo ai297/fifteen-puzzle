@@ -73,7 +73,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(ico|png|jpe?g|gif|svg)$/i,
+        test: /\.(ico|png|jpe?g|gif|svg|mp3|wav)$/i,
         loader: 'file-loader',
         options: {
           name: '[path][name].[ext]',
