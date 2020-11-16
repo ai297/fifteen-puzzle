@@ -6,8 +6,16 @@ import GameUI from './game-ui';
 import ModalDialog from './modals';
 import Score from './game-score';
 import playSound from './game-sound';
+import victory from './victory-ui';
+import getScoreTable from './score-ui';
 
 const SAVE_GAME_KEY = 'ai297-puzzle_saved-game';
+
+const getUssername = `
+<h3>Your result is one of the best!</h3>
+<p>What is your name?</p>
+<input type="text" class="get-name" id="username" placeholder="Anonymous">
+`;
 
 class SlidePuzzle {
     constructor() {
@@ -29,6 +37,12 @@ class SlidePuzzle {
             puzzleField.newField(puzzle.getField());
         };
 
+        const showScore = () => {
+            this.pause();
+            modalDialog.show(getScoreTable(Score.score));
+            playSound('popup');
+        };
+
         const win = () => {
             isPaused = true;
             clearInterval(timer);
@@ -37,18 +51,27 @@ class SlidePuzzle {
             localStorage.removeItem(SAVE_GAME_KEY);
 
             const gameScore = Score.calculateScore(puzzle.size, gameTime, gameMoves);
+            isFieldReady = false;
 
             const onWin = () => {
                 gameMoves = 0;
                 gameTime = 0;
                 puzzleField.updateBackImage();
                 gameUI.showMainMenu();
+                if (gameScore > Score.minPointsInScore) {
+                    playSound('tada', true);
+                    modalDialog.show(getUssername).finally(() => {
+                        let input = document.getElementById('username').value;
+                        input = input || 'Anonymous';
+                        Score.addToScore(puzzle.size, gameScore, input);
+                        console.log(Score.score);
+                    }).finally(showScore);
+                }
             };
 
             setTimeout(() => {
                 playSound('win');
-                modalDialog.show(`Congratulation! You win and got ${gameScore} points!<br>
-                    Your time is ${gameUI.gameTime} and you has ${gameMoves} moves.`, 'Yo!')
+                modalDialog.show(victory(gameScore, gameUI.gameTime, gameMoves))
                 .finally(onWin);
             }, 500);
         };
@@ -184,6 +207,7 @@ class SlidePuzzle {
 
             this.solver.solveIt(puzzle, puzzleField, (moves) => {
                 gameUI.gameMoves = gameMoves + moves;
+                playSound('move');
             }).then((moves) => {
                 console.log(`Puzzle complete with ${gameMoves + moves} moves. Time: ${gameTime}`);
                 console.log(`Solver take ${Score.calculateScore(puzzle.size, gameTime, moves)}`);
@@ -191,6 +215,7 @@ class SlidePuzzle {
                 gameUI.showMainMenu();
                 localStorage.removeItem(SAVE_GAME_KEY);
                 isFieldReady = false;
+                playSound('solved', true);
             })
             .catch((e) => {
                 alert(e);
@@ -207,6 +232,8 @@ class SlidePuzzle {
         gameUI.addListener('pause', this.pause);
         gameUI.addListener('continue', this.continue);
         gameUI.addListener('give-up', this.solve);
+        gameUI.addListener('leader-board', showScore);
+
         puzzleField.moveHandler = this.movePiece;
 
         Settings.addListener('fieldSize', changeFieldSize);

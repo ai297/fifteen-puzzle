@@ -4,7 +4,7 @@ const SCORE_COUNTS = 10;
 class Score {
     constructor() {
         const SCORE_COEFFICIENTS = {
-            3: [1.0, 60, 40],
+            3: [1.0, 60, 35],
             4: [1.2, 180, 100],
             5: [1.4, 540, 300],
             6: [1.6, 960, 550],
@@ -30,12 +30,15 @@ class Score {
         };
 
         this.addToScore = (fieldSize, points, name) => {
-            if (points <= this.score[this.score.length].points) return;
+            if (this.score.length >= SCORE_COUNTS && points <= this.score[this.score.length - 1].points) return;
+            
+            const scorObj = { field: fieldSize, points: points, player: name, date: Date.now() };
+            this.score.push(scorObj);
 
-            const scorOnj = { field: fieldSize, points: points, player: name, date: Date.now() };
-            this.score.push(scorOnj);
-
-            this.score.sort((a, b) => b.points - a.points);
+            this.score.sort((a, b) => {
+                console.log(a, b);
+                return b.points - a.points;
+            });
             this.score = this.score.slice(0, SCORE_COUNTS);
 
             saveScore();
@@ -46,7 +49,7 @@ class Score {
                 get: () => this.score.length > 0 ? this.score[0].points : 0,
             },
             minPointsInScore: {
-                get: () => this.score.length > 0 ? this.score[this.score.length - 1].points : 0,
+                get: () => this.score.length >= SCORE_COUNTS ? this.score[this.score.length - 1].points : 0,
             },
         });
 

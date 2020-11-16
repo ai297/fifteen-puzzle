@@ -22,11 +22,13 @@ class ModalDialog {
 
         let confirmHandler;
         let cancelHandler;
+        let removeCancelation = true;
 
         const hide = () => {
             this.element.style.opacity = 0;
+            removeCancelation = false;
             setTimeout(() => {
-                parent.removeChild(this.element);
+                if (!removeCancelation) parent.removeChild(this.element);
             }, 500);
         };
 
@@ -37,6 +39,7 @@ class ModalDialog {
         cancelButton.onclick = () => cancelHandler();
 
         this.show = (text, okText, cancelText) => new Promise((resolve, reject) => {
+            removeCancelation = true;
             this.element.style.opacity = 0;
             cancelButton.style.display = 'none';
             textElement.innerHTML = text;

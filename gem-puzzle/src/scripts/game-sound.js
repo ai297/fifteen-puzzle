@@ -8,16 +8,16 @@ const SOUNDS = {
     popup: './assets/sounds/popup-up.wav',
     move: './assets/sounds/move.wav',
     win: './assets/sounds/victory.mp3',
+    solved: './assets/sounds/solved.wav',
+    tada: './assets/sounds/tada.mp3',
 }
-const ALTs = {};
 
-let player;
+const player = new Audio();
+const altPlayer = new Audio();
 
-function playSound(name, alternate = false) {
+function playSound(name, alt = false) {
     if (typeof SOUNDS[name] === 'undefined' || !Settings.soundEnabled) return;
-    if (alternate && ALTs[name] === undefined) ALTs[name] = new Audio();
-    if (player === undefined) player = new Audio();
-    let p = alternate ? ALTs[name] : player;
+    let p = alt ? altPlayer : player;
     p.src = SOUNDS[name];
     p.load();
     p.play();
