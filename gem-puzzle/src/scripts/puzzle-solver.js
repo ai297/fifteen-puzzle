@@ -1,6 +1,6 @@
 class Solver {
     constructor() {
-        this.moveDelay = 300;
+        this.moveDelay = 150;
 
         let timerId;
 

@@ -23,10 +23,12 @@ class Score {
             localStorage.setItem(GAME_SCORE_KEY, JSON.stringify(this.score));
         }
 
-        this.calculateScore = (size, time, moves) => {
+        this.calculateScore = (size, time, moves, isNoNumbers = false) => {
             if (SCORE_COEFFICIENTS[size] === undefined) return 0;
             let coefs = SCORE_COEFFICIENTS[size];
-            return Math.ceil(100 * coefs[0] + 400 * (coefs[1] / time) + 600 * (coefs[2] / moves));
+            let extra = 1;
+            if (isNoNumbers) extra = 1.4;
+            return Math.ceil((100 * coefs[0] + 400 * (coefs[1] / time) + 600 * (coefs[2] / moves)) * extra);
         };
 
         this.addToScore = (fieldSize, points, name) => {

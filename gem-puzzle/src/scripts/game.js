@@ -28,6 +28,7 @@ class SlidePuzzle {
         let gameMoves = 0;
         let isPaused = true;
         let isFieldReady = false;
+        let currentGameStyle = Settings.puzzleStyle;
 
         // private methods
         const createPuzzle = (size) => {
@@ -63,7 +64,7 @@ class SlidePuzzle {
                     modalDialog.show(getUssername).finally(() => {
                         let input = document.getElementById('username').value;
                         input = input || 'Anonymous';
-                        Score.addToScore(puzzle.size, gameScore, input);
+                        Score.addToScore(puzzle.size, gameScore, input, currentGameStyle == '3');
                         console.log(Score.score);
                     }).finally(showScore);
                 }
@@ -138,6 +139,7 @@ class SlidePuzzle {
                 puzzleField.updatePuzzleStyle();
                 isFieldReady = true;
             }
+            currentGameStyle = Settings.puzzleStyle;
             gameTime = 0;
             isPaused = false;
             puzzleField.updatePositions(puzzle.getField(), puzzle.getMovablePieces());
@@ -167,7 +169,7 @@ class SlidePuzzle {
 
         this.save = () => {
             if (gameMoves === 0) return;
-            const state = [puzzle.size, puzzle.saveState(), gameMoves, gameTime, puzzleField.backImage];
+            const state = [puzzle.size, puzzle.saveState(), gameMoves, gameTime, puzzleField.backImage, currentGameStyle];
             const saveString = btoa(JSON.stringify(state));
             localStorage.setItem(SAVE_GAME_KEY, saveString);
             console.log('state saved');
@@ -175,15 +177,16 @@ class SlidePuzzle {
 
         this.load = () => {
             const saveString = localStorage.getItem(SAVE_GAME_KEY);
-            if(saveString === undefined) return;
+            if (saveString === undefined) return;
             const state = JSON.parse(atob(saveString));
             puzzle = new Puzzle(state[0]);
             puzzle.loadState(state[1]);
             gameMoves = state[2];
             gameTime = state[3];
+            currentGameStyle = state[5];
             puzzleField.newField(puzzle.getField());
             puzzleField.updateBackImage(state[4]);
-            puzzleField.updatePuzzleStyle();
+            puzzleField.updatePuzzleStyle(currentGameStyle);
             timer = startTimer();
             isFieldReady = true;
             puzzleField.setState_Active();
