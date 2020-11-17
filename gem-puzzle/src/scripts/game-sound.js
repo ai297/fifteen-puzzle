@@ -14,12 +14,16 @@ const SOUNDS = {
 
 const player = new Audio();
 const altPlayer = new Audio();
+let interact = false;
 
 function playSound(name, alt = false) {
     if (typeof SOUNDS[name] === 'undefined' || !Settings.soundEnabled) return;
     let p = alt ? altPlayer : player;
     p.src = SOUNDS[name];
     p.load();
-    p.play();
+    if (interact) p.play();
 }
+
+document.addEventListener('click', () => interact = true);
+
 export default playSound;

@@ -127,6 +127,11 @@ class SlidePuzzle {
                     });
                 return;
             }
+            if (typeof this.solver !== 'undefined' && this.solver.isSolving) {
+                this.solver.break();
+                isFieldReady = false;
+            }
+
             if (!isFieldReady) {
                 createPuzzle(Settings.fieldSize);
                 puzzleField.updateBackImage();
@@ -205,6 +210,8 @@ class SlidePuzzle {
 
             if (typeof this.solver === 'undefined') this.solver = new Solver();
 
+            gameUI.showMainMenu();
+
             this.solver.solveIt(puzzle, puzzleField, (moves) => {
                 gameUI.gameMoves = gameMoves + moves;
                 playSound('move');
@@ -212,7 +219,6 @@ class SlidePuzzle {
                 console.log(`Puzzle complete with ${gameMoves + moves} moves. Time: ${gameTime}`);
                 console.log(`Solver take ${Score.calculateScore(puzzle.size, gameTime, moves)}`);
                 puzzleField.setState_Completed();
-                gameUI.showMainMenu();
                 localStorage.removeItem(SAVE_GAME_KEY);
                 gameMoves = 0;
                 gameTime = 0;

@@ -2,6 +2,8 @@ class Solver {
     constructor() {
         this.moveDelay = 300;
 
+        let timerId;
+
         let currentPuzzle;
         let currentField;
         let currentPiece = 1;
@@ -52,7 +54,7 @@ class Solver {
                     moves++;
                     onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
-                    setTimeout(goNext, this.moveDelay);
+                    timerId = setTimeout(goNext, this.moveDelay);
                 };
                 goNext();
             });
@@ -83,7 +85,7 @@ class Solver {
                     moves++;
                     onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
-                    setTimeout(goNext, this.moveDelay);
+                    timerId = setTimeout(goNext, this.moveDelay);
                 };
                 goNext();
             });
@@ -124,7 +126,7 @@ class Solver {
                     moves++;
                     onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
-                    setTimeout(goNext, this.moveDelay);
+                    timerId = setTimeout(goNext, this.moveDelay);
                 };
                 goNext();
             });
@@ -164,7 +166,7 @@ class Solver {
                     moves++;
                     onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
-                    setTimeout(goNext, this.moveDelay);
+                    timerId = setTimeout(goNext, this.moveDelay);
                 };
                 goNext();
             });
@@ -199,7 +201,7 @@ class Solver {
                     moves++;
                     onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
-                    setTimeout(goNext, this.moveDelay);
+                    timerId = setTimeout(goNext, this.moveDelay);
                 };
                 goNext();
             });
@@ -234,7 +236,7 @@ class Solver {
                     moves++;
                     onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
-                    setTimeout(goNext, this.moveDelay);
+                    timerId = setTimeout(goNext, this.moveDelay);
                 };
                 goNext();
             });
@@ -301,7 +303,7 @@ class Solver {
                     moves++;
                     onMoveHandler(moves);
                     currentField.updatePositions(currentPuzzle.getField());
-                    setTimeout(goNext, this.moveDelay);
+                    timerId = setTimeout(goNext, this.moveDelay);
                 };
                 goNext();
             });
@@ -323,7 +325,7 @@ class Solver {
                 currentPiece++;
                 solved.push(currentIndex);
                 currentField.selectPieces(currentPiece);
-                setTimeout(nextMove, 100);
+                timerId = setTimeout(nextMove, 100);
                 return;
             }
             // get coords.
@@ -562,7 +564,7 @@ class Solver {
             if (isMoved) {
                 moves++;
                 onMoveHandler(moves);
-                setTimeout(nextMove, this.moveDelay);
+                timerId = setTimeout(nextMove, this.moveDelay);
             }
             else {
                 rejectHandler(Error('Puzzle did not solve'));
@@ -592,6 +594,25 @@ class Solver {
             currentField.setState_Solving();
 
             nextMove();
+        });
+
+        this.break = () => {
+            clearTimeout(timerId);
+            //rejectHandler(Error('Solving interrupted.'));
+            currentField.setState_Default();
+            currentPuzzle = null;
+            currentField = null;
+            currentPiece = 1;
+            solved = [];
+            solving = false;
+            moves = 0;
+            onMoveHandler = null;
+        }
+
+        Object.defineProperties(this, {
+            isSolving: {
+                get: () => solving,
+            },
         });
     }
 }

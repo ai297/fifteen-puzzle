@@ -155,6 +155,13 @@ body {
     }
     &.solving {
         & .puzzle-piece { transition: all .25s ease-in-out; }
+        & .puzzle-piece--selected { 
+            color: $alt-interactive-color;
+            span { 
+                color: white;
+                opacity: 1;
+            }
+        }
         & .puzzle-piece__frame { opacity: 1; }
         & .puzzle-field__frame { border-color: mix($alt-interactive-color, transparent, 60%); }
     }
@@ -188,14 +195,6 @@ body {
 
     &--completed {
         span { opacity: .5; }
-    }
-
-    &--selected { 
-        color: $alt-interactive-color;
-        span { 
-            color: white;
-            opacity: 1;
-        }
     }
 
     &__side {
