@@ -7,9 +7,9 @@ const soundOver = () => playSound('hover');
 const soundClick = () => playSound('click');
 
 function createUILayer() {
-    const header = create('ui-layer__header', 'h1');
     const uiLayer = create('ui-layer');
     const mainSection = create('ui-layer__main');
+    const header = create('ui-layer__header', 'h1');
     const copy = create('ui-layer__copyright');
     copy.innerHTML = 'Kris Casper, <a href="https://github.com/ai297" target="_blank">github.com/ai297</a><br><a href="https://rs.school" target="_blank">RSSchool</a> 2020Q3';
 
@@ -91,11 +91,13 @@ class GameUI {
         this.showMainMenu = (anableContinueButton = false) => {
             if (anableContinueButton) mainMenu.continueButton.removeAttribute('disabled');
             else mainMenu.continueButton.setAttribute('disabled', true);
+            uiLayer.rootElement.classList.remove('playing');
             menuSlider.goTo('main-menu');
         };
         this.showStats = (time = 0, moves = 0) => {
             setStatsTime(time);
             statsMenu.moves.innerHTML = moves;
+            uiLayer.rootElement.classList.add('playing');
             menuSlider.goTo('game-stats', true);
         };
 
@@ -120,6 +122,17 @@ class GameUI {
                 get: () => statsMenu.moves.innerText,
                 set: (val) => statsMenu.moves.innerHTML = val,
             },
+            // playingState: {
+            //     get: () => {
+            //         if (this._playingMode === undefined) return false;
+            //         else return this._playingMode;
+            //     },
+            //     set: (val) => {
+            //         this._playingMode = val;
+            //         if (val) uiLayer.rootElement.classList.add('playing');
+            //         else uiLayer.rootElement.classList.remove('playing');
+            //     },
+            // },
         });
 
         // handlers

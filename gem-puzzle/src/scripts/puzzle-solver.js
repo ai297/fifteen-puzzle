@@ -18,11 +18,11 @@ class Solver {
         }
 
         const fixLastOfRow = (step = 0) => {
-            console.log('go to move last piece in row to its place');
+            // console.log('go to move last piece in row to its place');
             return new Promise((resolve) => {
                 const goNext = () => {
                     if (step > 10) {
-                        console.log('end of last of row fixing');
+                        // console.log('end of last of row fixing');
                         resolve();
                         return;
                     }
@@ -59,11 +59,11 @@ class Solver {
         };
 
         const switchToTop = (step = 0) => {
-            console.log('go to switch to top');
+            // console.log('go to switch to top');
             return new Promise((resolve) => {
                 const goNext = () => {
                     if (step > 3) {
-                        console.log('end switching');
+                        // console.log('end switching');
                         resolve();
                         return;
                     }
@@ -90,11 +90,11 @@ class Solver {
         };
 
         const switchToTopRight = (step = 0) => {
-            console.log('go to switch to top and right');
+            // console.log('go to switch to top and right');
             return new Promise((resolve) => {
                 const goNext = () => {
                     if (step > 11) {
-                        console.log('end switching');
+                        // console.log('end switching');
                         resolve();
                         return;
                     }
@@ -131,11 +131,11 @@ class Solver {
         };
 
         const switchUp = (step = 0, end = 10) => {
-            console.log('go to switch up');
+            // console.log('go to switch up');
             return new Promise((resolve) => {
                 const goNext = () => {
                     if (step > end) {
-                        console.log('end switching');
+                        // console.log('end switching');
                         resolve();
                         return;
                     }
@@ -171,11 +171,11 @@ class Solver {
         };
 
         const fixLastLine = (step = 0, end = 27) => {
-            console.log('go to last line fixing');
+            // console.log('go to last line fixing');
             return new Promise((resolve) => {
                 const goNext = () => {
                     if (step > end) {
-                        console.log('end fixing');
+                        // console.log('end fixing');
                         resolve();
                         return;
                     }
@@ -206,11 +206,11 @@ class Solver {
         };
 
         const fixLastPiece = (step = 0, end = 28) => {
-            console.log('go to last piece fixing');
+            // console.log('go to last piece fixing');
             return new Promise((resolve) => {
                 const goNext = () => {
                     if (step > end) {
-                        console.log('end fixing');
+                        // console.log('end fixing');
                         resolve();
                         return;
                     }
@@ -241,12 +241,12 @@ class Solver {
         };
 
         const moveToTopRight = (size, step = 0) => {
-            console.log('go to switch to top and right with size', size);
+            // console.log('go to switch to top and right with size', size);
             return new Promise((resolve) => {
                 const goNext = () => {
                     if (step > size * 6 + 1) {
-                        console.log(' ITS A HEEELLLLLLLLLLLL ');
-                        console.log('end switching');
+                        // console.log(' ITS A HEEELLLLLLLLLLLL ');
+                        // console.log('end switching');
                         resolve();
                         return;
                     }
@@ -317,9 +317,9 @@ class Solver {
             let state = currentPuzzle.getField();
             let currentIndex = state.indexOf(currentPiece);
             let isMoved = false;
-            console.log('------------');
+            // console.log('------------');
             if (currentIndex === currentPiece - 1) {
-                console.log(`${currentPiece} is solved. Go next`);
+                // console.log(`${currentPiece} is solved. Go next`);
                 currentPiece++;
                 solved.push(currentIndex);
                 currentField.selectPieces(currentPiece);
@@ -348,71 +348,71 @@ class Solver {
             let left = (xE - 1) >= 0 ? xE - 1 + yE * size : null;
             let right = (xE + 1) < size ? xE + 1 + yE * size : null;
             
-            console.log(dXE, dYE);
+            // console.log(dXE, dYE);
             if (dY0 > 0 && dX0 > 0) {
-                console.log('target should be move to up and left');
+                // console.log('target should be move to up and left');
                 
                 if (dXE > 0 && dYE < 0) {
-                    console.log('empty is right and top');
-                    console.log('try to move left');
+                    // console.log('empty is right and top');
+                    // console.log('try to move left');
                     isMoved = move(left);
                 }
                 
                 else if (dXE <= 0 && dYE < 0) {
-                    console.log('empty is left (or current col) and top');
-                    console.log('try to move bottom');
+                    // console.log('empty is left (or current col) and top');
+                    // console.log('try to move bottom');
                     isMoved = move(bottom);
                 }
 
                 else if (xP === size - 1 && dXE === 0 && dYE > 0) {
-                    console.log('xP === size - 1 && dXE === 0 && dYE > 0');
-                    console.log('try to move left');
+                    // console.log('xP === size - 1 && dXE === 0 && dYE > 0');
+                    // console.log('try to move left');
                     isMoved = move(left);
                 }
 
                 else if (xP === size - 1 && dXE < 0 && dYE > 0) {
-                    console.log('xP === size - 1 && dXE < 0 && dYE > 0');
-                    console.log('try to move top');
+                    // console.log('xP === size - 1 && dXE < 0 && dYE > 0');
+                    // console.log('try to move top');
                     isMoved = move(top);
                 }
 
                 else if (xP === size - 1 && dXE < 0 && dYE <= 0) {
-                    console.log('xP === size - 1 && dXE < 0 && dYE <= 0');
-                    console.log('try to move right');
+                    // console.log('xP === size - 1 && dXE < 0 && dYE <= 0');
+                    // console.log('try to move right');
                     isMoved = move(right);
                 }
                 
                 else if (dXE <= 0 && dYE >= 0) {
-                    console.log('empty is left (or current col) and bottom (or current row)');
-                    console.log('try to move right');
+                    // console.log('empty is left (or current col) and bottom (or current row)');
+                    // console.log('try to move right');
                     isMoved = move(right);
                 }
                 
                 else  if (dXE > 0 && dYE >= 0) {
-                    console.log('empty is right and bottom (or current row)');
-                    console.log('try to move top');
+                    // console.log('empty is right and bottom (or current row)');
+                    // console.log('try to move top');
                     isMoved = move(top);
                 }
             }
 
             else if (dY0 > 0 && dX0 < 0) {
-                console.log('target should be move right and up');
+                // console.log('target should be move right and up');
 
                 if (dXE > 0 && dYE <= 0) {
-                    console.log('empty is right and top (or current row)');
-                    console.log('try to move left, else bottom');
+                    // console.log('empty is right and top (or current row)');
+                    // console.log('try to move left, else bottom');
                     isMoved = move(left) || move(bottom);
                 }
 
                 else if (dXE <= 0 && dYE > 0) {
-                    console.log('empty is bottom and left');
-                    console.log('try to move right');
+                    // console.log('empty is bottom and left');
+                    // console.log('try to move right');
                     isMoved = move(right);
                 }
 
                 else if (dXE <= 0 && dYE <= 0) {
-                    console.log('empty is top (or current row) and left (or current col)');
-                    console.log('try to move bottom');
+                    // console.log('empty is top (or current row) and left (or current col)');
+                    // console.log('try to move bottom');
                     isMoved = move(bottom);
                     if (!isMoved && dX0 === -1 && xE !== 0) {
                         switchToTopRight().then(nextMove);
@@ -433,36 +433,36 @@ class Solver {
                 }
 
                 else if (dXE > 0 && dYE > 0) {
-                    console.log('empty is bottom and right');
-                    console.log('try to move top');
+                    // console.log('empty is bottom and right');
+                    // console.log('try to move top');
                     isMoved = move(top);
                 }
             }
 
             else if (dY0 === 0 && dX0 > 0) {
-                console.log('target should be move left');
+                // console.log('target should be move left');
 
                 if (dXE >= 0 && dYE > 0) {
-                    console.log('empty is bottom and right (or current row)');
-                    console.log('try to move left');
+                    // console.log('empty is bottom and right (or current row)');
+                    // console.log('try to move left');
                     isMoved = move(left);
                 }
 
                 else if (dXE < 0 && dYE > 0) {
-                    console.log('empty is bottom and left');
-                    console.log('try to move top, else right');
+                    // console.log('empty is bottom and left');
+                    // console.log('try to move top, else right');
                     isMoved = move(top) || move(right);
                 }
 
                 else if (dXE < 0 && dYE >= 0) {
-                    console.log('empty is left and top (or current row)');
-                    console.log('try to move right');
+                    // console.log('empty is left and top (or current row)');
+                    // console.log('try to move right');
                     isMoved = move(right);
                 }
 
                 else if (dXE > 0 && dYE <= 0) {
-                    console.log('empty is top (or current row) and right');
-                    console.log('try to move bottom (or left)');
+                    // console.log('empty is top (or current row) and right');
+                    // console.log('try to move bottom (or left)');
                     isMoved = move(bottom);
                     if (!isMoved && dXE > 1) isMoved = move(left);
                     if (!isMoved && yP === size - 1 && xP === size - 2 && dXE > 0) {
@@ -477,11 +477,11 @@ class Solver {
             }
 
             else if (dY0 > 0 && dX0 === 0) {
-                console.log('target should be move up');
+                // console.log('target should be move up');
 
                 if (dXE > 0 && dYE >= 0) {
-                    console.log('empty is bottom (or current row) and right');
-                    console.log('try to move top');
+                    // console.log('empty is bottom (or current row) and right');
+                    // console.log('try to move top');
                     isMoved = move(top);
                     // if (!isMoved && yP === size - 1 && dXE === -1) {
                     //     switchToTop(2).then(nextMove);
@@ -490,13 +490,13 @@ class Solver {
                 }
 
                 else if (xP === size - 1 && dXE < 0 && dYE >= 0 && x0 !== size - 1) {
-                    console.log('xP === size - 1 && dXE < 0 && dYE >= 0');
-                    console.log('try to move top');
+                    // console.log('xP === size - 1 && dXE < 0 && dYE >= 0');
+                    // console.log('try to move top');
                     isMoved = move(top);
                 }
                 else if (xP === size -1 && dXE < 0 && dYE < 0) {
-                    console.log('xP === size -1 && dXE < 0 && dYE < 0');
-                    console.log('try to move right');
+                    // console.log('xP === size -1 && dXE < 0 && dYE < 0');
+                    // console.log('try to move right');
                     isMoved = move(right);
                 }
 
@@ -506,8 +506,8 @@ class Solver {
                 }
 
                 else if (dXE <= 0 && dYE <= 0) {
-                    console.log('empty is top (or current row) and left (or current col)');
-                    console.log('try to move bottom (or right)');
+                    // console.log('empty is top (or current row) and left (or current col)');
+                    // console.log('try to move bottom (or right)');
                     isMoved = move(bottom);
 
                     if (!isMoved && dYE === 0 && dXE < -1) isMoved = move(right);
@@ -528,14 +528,14 @@ class Solver {
                 }
 
                 else if (dXE > 0 && dYE < 0) {
-                    console.log('empty is top and right');
-                    console.log('try to move left');
+                    // console.log('empty is top and right');
+                    // console.log('try to move left');
                     isMoved = move(left);
                 }
 
                 else if (dXE <= 0 && dYE > 0) {
-                    console.log('empty is bottom and left (or current col)');
-                    console.log('try to move right');
+                    // console.log('empty is bottom and left (or current col)');
+                    // console.log('try to move right');
                     isMoved = move(right);
                     // if current piece is the last piece of row
                     if (!isMoved && dY0 === 1 && x0 === size - 1) {
@@ -553,7 +553,7 @@ class Solver {
                 }
             }
             else {
-                console.log('what direction?');
+                // console.log('what direction?');
                 //isMoved = move(bottom) || move(right) || move(left) || move(top);
                 
             }

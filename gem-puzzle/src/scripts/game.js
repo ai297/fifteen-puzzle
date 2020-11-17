@@ -214,6 +214,8 @@ class SlidePuzzle {
                 puzzleField.setState_Completed();
                 gameUI.showMainMenu();
                 localStorage.removeItem(SAVE_GAME_KEY);
+                gameMoves = 0;
+                gameTime = 0;
                 isFieldReady = false;
                 playSound('solved', true);
             })

@@ -56,6 +56,10 @@ class PuzzleField {
             if(!Array.isArray(piecesArray)) return;
 
             const fieldSize = Math.sqrt(piecesArray.length);
+
+            if (fieldSize > 6) switch3dStyle(false);
+            else switch3dStyle(Settings.use3dStyle);
+
             this.clear();
             createGrid(fieldSize, fieldElement);
 
